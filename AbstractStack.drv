@@ -1,0 +1,76 @@
+/*		 
+ * fastutil: Fast & compact type-specific collections for Java
+ *
+ * Copyright (C) 2002-2008 Sebastiano Vigna 
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+package PACKAGE;
+
+import it.unimi.dsi.fastutil.AbstractStack;
+
+/** An abstract class providing basic methods for implementing a type-specific stack interface.
+ *
+ * <P>To create a type-specific stack, you need both object methods and
+ * primitive-type methods. However, if you inherit from this class you need
+ * just one (anyone).
+ */
+
+public abstract class ABSTRACT_STACK KEY_GENERIC extends AbstractStack<KEY_GENERIC_CLASS> implements STACK KEY_GENERIC {
+
+	protected ABSTRACT_STACK() {}
+
+	/** Delegates to the corresponding type-specific method. */
+	public void push( KEY_GENERIC_CLASS o ) {
+		push( o.KEY_VALUE() ); 
+	}
+
+	/** Delegates to the corresponding type-specific method. */
+	public KEY_GENERIC_CLASS pop() {
+		return KEY_CLASS.valueOf( POP() ); 
+	}
+
+	/** Delegates to the corresponding type-specific method. */
+	public KEY_GENERIC_CLASS top() {
+		return KEY_CLASS.valueOf( TOP() ); 
+	}
+
+	/** Delegates to the corresponding type-specific method. */
+	public KEY_GENERIC_CLASS peek( int i ) {
+		return KEY_CLASS.valueOf( PEEK( i ) ); 
+	}
+
+	/** Delegates to the corresponding generic method. */
+	public void push( KEY_TYPE k ) {
+		push( KEY_CLASS.valueOf( k ) ); 
+	}
+
+	/** Delegates to the corresponding generic method. */
+	public KEY_TYPE POP() {
+		return pop().KEY_VALUE(); 
+	}
+
+	/** Delegates to the corresponding generic method. */
+	public KEY_TYPE TOP() {
+		return top().KEY_VALUE(); 
+	}
+
+	/** Delegates to the corresponding generic method. */
+	public KEY_TYPE PEEK( int i ) {
+		return peek( i ).KEY_VALUE();
+	}
+}
