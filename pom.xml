@@ -40,17 +40,17 @@
 		<include>**/*.c</include>
 		<include>**/*.h</include>
 		<include>**/*.j</include>
-		<include>java/it/unimi/dsi/fastutil/io/TextIO.java</include>
-		<include>java/it/unimi/dsi/fastutil/io/BinIO.java</include>
-		<include>java/it/unimi/dsi/fastutil/booleans/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/bytes/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/chars/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/doubles/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/floats/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/ints/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/longs/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/objects/*.java</include>
-		<include>java/it/unimi/dsi/fastutil/shorts/*.java</include>
+		<include>it/unimi/dsi/fastutil/io/TextIO.java</include>
+		<include>it/unimi/dsi/fastutil/io/BinIO.java</include>
+		<include>it/unimi/dsi/fastutil/booleans/*.java</include>
+		<include>it/unimi/dsi/fastutil/bytes/*.java</include>
+		<include>it/unimi/dsi/fastutil/chars/*.java</include>
+		<include>it/unimi/dsi/fastutil/doubles/*.java</include>
+		<include>it/unimi/dsi/fastutil/floats/*.java</include>
+		<include>it/unimi/dsi/fastutil/ints/*.java</include>
+		<include>it/unimi/dsi/fastutil/longs/*.java</include>
+		<include>it/unimi/dsi/fastutil/objects/*.java</include>
+		<include>it/unimi/dsi/fastutil/shorts/*.java</include>
 	      </includes>
 	    </fileset>
 	  </filesets>
