@@ -103,6 +103,22 @@
 	  </arguments>
 	</configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>*.drv</exclude>
+            <exclude>gencsource.sh</exclude>
+            <exclude>makefile</exclude>
+            <exclude>README</exclude>
+            <exclude>README.srcjar</exclude>
+            <exclude>COPYING.LIB</exclude>
+            <exclude>CHANGES</exclude>
+            <exclude>build.xml</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
