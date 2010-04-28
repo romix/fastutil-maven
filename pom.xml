@@ -19,6 +19,20 @@
   </licenses>
   <build>
     <sourceDirectory>java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>*.drv</include>
+          <include>gencsource.sh</include>
+          <include>makefile</include>
+          <include>README</include>
+          <include>COPYING.LIB</include>
+          <include>CHANGES</include>
+          <include>build.xml</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
