@@ -1,0 +1,5 @@
+If you have unpacked fastutil from the source Jar, the build system
+isn't set up quite correctly.  In order for a build to work, you must
+first create a 'java' directory and move the 'it' directory and
+'overview.html' file into it.  The normal fastutil build system (and
+Maven pom) will then work.

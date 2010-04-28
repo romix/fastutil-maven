@@ -27,6 +27,7 @@
           <include>gencsource.sh</include>
           <include>makefile</include>
           <include>README</include>
+          <include>README.srcjar</include>
           <include>COPYING.LIB</include>
           <include>CHANGES</include>
           <include>build.xml</include>
