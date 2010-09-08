@@ -17,6 +17,12 @@
       <url>http://www.gnu.org/copyleft/lesser.html</url>
     </license>
   </licenses>
+  <scm>
+  	<connection>scm:hg:http://bitbucket.org/elehack/fastutil</connection>
+  	<developerConnection>scm:hg:https://bitbucket.org/elehack/fastutil</developerConnection>
+  	<tag>maven</tag>
+  	<url>http://bitbucket.org/elehack/fastutil</url>
+  </scm>
   <build>
     <sourceDirectory>java</sourceDirectory>
     <resources>
