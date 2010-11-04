@@ -20,9 +20,9 @@
   </licenses>
   <distributionManagement>
     <repository>
-      <id>umn-netfiles-ekstr041</id>
-      <name>Michael's repository on UMN NetFiles</name>
-      <url>https://netfiles.umn.edu/users/ekstr041/maven</url>
+      <id>elehack.net</id>
+      <name>elehack.net Maven repository</name>
+      <url>scpexe://elehack.net/srv/www/maven</url>
     </repository>
   </distributionManagement>
   <scm>
