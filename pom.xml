@@ -26,10 +26,10 @@
     </repository>
   </distributionManagement>
   <scm>
-    <connection>scm:hg:http://bitbucket.org/elehack/fastutil</connection>
-    <developerConnection>scm:hg:https://bitbucket.org/elehack/fastutil</developerConnection>
+    <connection>scm:git:git://repo.or.cz/fastutil-maven.git</connection>
+    <developerConnection>scm:git:ssh://repo.or.cz/srv/git/fastutil-maven.git</developerConnection>
     <tag>maven</tag>
-    <url>http://bitbucket.org/elehack/fastutil</url>
+    <url>http://repo.or.cz/w/fastutil-maven.git</url>
   </scm>
   <build>
     <sourceDirectory>java</sourceDirectory>
