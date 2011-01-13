@@ -1,0 +1,14 @@
+target
+*.c
+*.h
+src/it/unimi/dsi/fastutil/shorts/*.java
+src/it/unimi/dsi/fastutil/objects/*.java
+src/it/unimi/dsi/fastutil/longs/*.java
+src/it/unimi/dsi/fastutil/ints/*.java
+src/it/unimi/dsi/fastutil/floats/*.java
+src/it/unimi/dsi/fastutil/doubles/*.java
+src/it/unimi/dsi/fastutil/chars/*.java
+src/it/unimi/dsi/fastutil/bytes/*.java
+src/it/unimi/dsi/fastutil/booleans/*.java
+src/it/unimi/dsi/fastutil/io/TextIO.java
+src/it/unimi/dsi/fastutil/io/BinIO.java
