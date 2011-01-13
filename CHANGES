@@ -1,3 +1,59 @@
+6.0.0 -> 6.1.0
+
+- Hash-based classes have been rewritten using linear probing and
+  a good hash (MurmurHash3). The old classes can be still generated
+  using the target oldsources.
+
+- Bizarre queues (double- and sesqui-indirect) have been removed
+  from the standard jar, but they can be still generated using the
+  target oldsources.
+
+5.1.5 -> 6.0.0
+
+- WARNING: the jar file is now fastutil.jar (not fastutil5.jar), again.
+
+- fastutil is now released under the Apache License 2.0.
+
+- New framework for big arrays, represented as arrays-of-arrays.
+  BigArrays and the type-specific counterparts provide static
+  methods of all kinds.
+
+- New Size64 interface for classes implementing big collections.
+
+- New framework for big lists--lists with longs as indices. The only
+  present implementation uses big arrays, but, for instance,
+  Sux4J's succinct lists will be retrofitted to LongBigList
+  (presently they implement LongBigList from dsiutils, which will
+  be deprecated).
+
+- List.iterator() now returns a ListIterator. There is no real reason
+  not to do this, and the API change is handled from an implementation
+  viewpoint in AbstractList, so nodoby should really notice.
+
+- New Collections.asCollection(Iterable) method to expose iterables as
+  collections (missing methods are computed using the iterator). This was
+  also the occasion to streamline type-specific abstract collections,
+  which now inherit from java.util.AbstractCollection, so we support
+  contains, clear, etc. methods as long as there is an iterator.
+
+- Fixed bugged array-based constructors of ArrayMap and ArraySet.
+
+- Fixed bugged put/remove methods in abstract functions. Thanks to
+  Katja Filippova for reporting this bug.
+
+- New front-coded lists use big arrays, so they can store much more
+  (in fact, unlimited) data. Unfortunately, they are no longer
+  serialisation-compatible with previous versions.
+
+- New MeasurableStream interface that is implemented by
+  MeasurableInputStream and by a new, analogous MeasurableOutputStream.
+
+- Better FastBufferedOutputStream and FastByteArrayOutputStream that
+  are measurable and positionable.
+
+- Now all clone() methods override covariantly the defult return type
+  (Object).
+
 5.1.4 -> 5.1.5
 
 - ArraySet was implementing isEmpty() with inverted logic (thanks to
