@@ -1,6 +1,6 @@
 include build.properties
 
-SOURCEDIR = java/it/unimi/dsi/fastutil
+SOURCEDIR = src/it/unimi/dsi/fastutil
 DOCSDIR = docs
 
 APIURL=http://java.sun.com/j2se/5.0/docs/api # External URLs in the docs will point here
@@ -29,6 +29,10 @@ TYPE_NOBOOL=$(TYPE_NOBOOL_NOREF) Reference
 # The capitalized types used to build class and method names; now references appear as Reference.
 TYPE=$(TYPE_NOREF) Reference
 
+#  The capitalized types used to build class and method names; only types for which big structures are built are listed.
+TYPE_BIG=Int Long Float Double Object Reference
+
+
 # These variables are used as an associative array (using computed names).
 PACKAGE_Boolean = booleans
 PACKAGE_Byte = bytes
@@ -54,18 +58,18 @@ source:
 	-rm -f fastutil-$(version)
 	ln -s . fastutil-$(version)
 	tar zcvf fastutil-$(version)-src.tar.gz --owner=0 --group=0 \
-		fastutil-$(version)/*.drv \
+		fastutil-$(version)/drv/*.drv \
 		fastutil-$(version)/build.xml \
 		fastutil-$(version)/build.properties \
 		fastutil-$(version)/gencsource.sh \
 		fastutil-$(version)/CHANGES \
 		fastutil-$(version)/README \
-		fastutil-$(version)/COPYING.LIB \
+		fastutil-$(version)/LICENSE-2.0 \
 		fastutil-$(version)/makefile \
 		$(foreach f, $(SOURCES), fastutil-$(version)/$(f)) \
 		fastutil-$(version)/$(SOURCEDIR)/{boolean,byte,char,short,int,long,float,double,object}s/package.html \
 		fastutil-$(version)/$(SOURCEDIR)/io/package.html \
-		fastutil-$(version)/java/overview.html
+		fastutil-$(version)/src/overview.html
 	rm fastutil-$(version)
 
 bin:
@@ -76,393 +80,408 @@ bin:
 	tar zcvf fastutil-$(version)-bin.tar.gz --owner=0 --group=0 \
 		fastutil-$(version)/CHANGES \
 		fastutil-$(version)/README \
-		fastutil-$(version)/COPYING.LIB \
+		fastutil-$(version)/LICENSE-2.0 \
 		fastutil-$(version)/docs \
 		fastutil-$(version)/fastutil-$(version).jar
 	rm fastutil-$(version)
 
 
-LinkedOpenHashSet.drv: OpenHashSet.drv
-	ln -sf OpenHashSet.drv $@
-
-LinkedOpenHashMap.drv: OpenHashMap.drv
-	ln -sf OpenHashMap.drv $@
-
-OpenCustomHashSet.drv: OpenHashSet.drv
-	ln -sf OpenHashSet.drv $@
-
-OpenCustomHashMap.drv: OpenHashMap.drv
-	ln -sf OpenHashMap.drv $@
-
-LinkedOpenCustomHashSet.drv: OpenHashSet.drv
-	ln -sf OpenHashSet.drv $@
-
-LinkedOpenCustomHashMap.drv: OpenHashMap.drv
-	ln -sf OpenHashMap.drv $@
-
-CSOURCES := 
 
 #
 # Interfaces
 #
 
 ITERABLES := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Iterable.c)
-$(ITERABLES): Iterable.drv; ./gencsource.sh $< $@ >$@
+$(ITERABLES): drv/Iterable.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ITERABLES)
 
 COLLECTIONS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Collection.c)
-$(COLLECTIONS): Collection.drv; ./gencsource.sh $< $@ >$@
+$(COLLECTIONS): drv/Collection.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(COLLECTIONS)
 
 SETS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Set.c)
-$(SETS): Set.drv; ./gencsource.sh $< $@ >$@
+$(SETS): drv/Set.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SETS)
 
 SORTED_SETS := $(foreach k,$(TYPE_NOBOOL), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)SortedSet.c)
-$(SORTED_SETS): SortedSet.drv; ./gencsource.sh $< $@ >$@
+$(SORTED_SETS): drv/SortedSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SORTED_SETS)
 
 FUNCTIONS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)Function.c))
-$(FUNCTIONS): Function.drv; ./gencsource.sh $< $@ >$@
+$(FUNCTIONS): drv/Function.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(FUNCTIONS)
 
 MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)Map.c))
-$(MAPS): Map.drv; ./gencsource.sh $< $@ >$@
+$(MAPS): drv/Map.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(MAPS)
 
 SORTED_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)SortedMap.c))
-$(SORTED_MAPS): SortedMap.drv; ./gencsource.sh $< $@ >$@
+$(SORTED_MAPS): drv/SortedMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SORTED_MAPS)
 
 LISTS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)List.c)
-$(LISTS): List.drv; ./gencsource.sh $< $@ >$@
+$(LISTS): drv/List.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LISTS)
 
 STACKS := $(foreach k,$(TYPE_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Stack.c)
-$(STACKS): Stack.drv; ./gencsource.sh $< $@ >$@
+$(STACKS): drv/Stack.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(STACKS)
 
 PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)PriorityQueue.c)
-$(PRIORITY_QUEUES): PriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(PRIORITY_QUEUES): drv/PriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(PRIORITY_QUEUES)
 
 INDIRECT_PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)IndirectPriorityQueue.c)
-$(INDIRECT_PRIORITY_QUEUES): IndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(INDIRECT_PRIORITY_QUEUES): drv/IndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(INDIRECT_PRIORITY_QUEUES)
 
-INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)IndirectDoublePriorityQueue.c)
-$(INDIRECT_DOUBLE_PRIORITY_QUEUES): IndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
-
-CSOURCES += $(INDIRECT_DOUBLE_PRIORITY_QUEUES)
-
-COMPARATORS := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Comparator.c)
-$(COMPARATORS): Comparator.drv; ./gencsource.sh $< $@ >$@
+COMPARATORS := $(foreach k,$(TYPE_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Comparator.c)
+$(COMPARATORS): drv/Comparator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(COMPARATORS)
 
 ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Iterator.c)
-$(ITERATORS): Iterator.drv; ./gencsource.sh $< $@ >$@
+$(ITERATORS): drv/Iterator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ITERATORS)
 
 BIDIRECTIONAL_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BidirectionalIterator.c)
-$(BIDIRECTIONAL_ITERATORS): BidirectionalIterator.drv; ./gencsource.sh $< $@ >$@
+$(BIDIRECTIONAL_ITERATORS): drv/BidirectionalIterator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(BIDIRECTIONAL_ITERATORS)
 
 LIST_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ListIterator.c)
-$(LIST_ITERATORS): ListIterator.drv; ./gencsource.sh $< $@ >$@
+$(LIST_ITERATORS): drv/ListIterator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LIST_ITERATORS)
+
+BIG_LISTS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BigList.c)
+$(BIG_LISTS): drv/BigList.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(BIG_LISTS)
+
+BIG_LIST_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BigListIterator.c)
+$(BIG_LIST_ITERATORS): drv/BigListIterator.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(BIG_LIST_ITERATORS)
 
 #
 # Abstract implementations
 #
 
 ABSTRACT_COLLECTIONS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)Collection.c)
-$(ABSTRACT_COLLECTIONS): AbstractCollection.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_COLLECTIONS): drv/AbstractCollection.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_COLLECTIONS)
 
 ABSTRACT_SETS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)Set.c)
-$(ABSTRACT_SETS): AbstractSet.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_SETS): drv/AbstractSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_SETS)
 
 ABSTRACT_SORTED_SETS := $(foreach k,$(TYPE_NOBOOL), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)SortedSet.c)
-$(ABSTRACT_SORTED_SETS): AbstractSortedSet.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_SORTED_SETS): drv/AbstractSortedSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_SORTED_SETS)
 
 ABSTRACT_FUNCTIONS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)2$(v)Function.c))
-$(ABSTRACT_FUNCTIONS): AbstractFunction.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_FUNCTIONS): drv/AbstractFunction.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_FUNCTIONS)
 
 ABSTRACT_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)2$(v)Map.c))
-$(ABSTRACT_MAPS): AbstractMap.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_MAPS): drv/AbstractMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_MAPS)
 
 ABSTRACT_SORTED_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)2$(v)SortedMap.c))
-$(ABSTRACT_SORTED_MAPS): AbstractSortedMap.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_SORTED_MAPS): drv/AbstractSortedMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_SORTED_MAPS)
 
 ABSTRACT_LISTS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)List.c)
-$(ABSTRACT_LISTS): AbstractList.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_LISTS): drv/AbstractList.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_LISTS)
 
+ABSTRACT_BIG_LISTS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)BigList.c)
+$(ABSTRACT_BIG_LISTS): drv/AbstractBigList.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(ABSTRACT_BIG_LISTS)
+
 ABSTRACT_STACKS := $(foreach k,$(TYPE_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)Stack.c)
-$(ABSTRACT_STACKS): AbstractStack.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_STACKS): drv/AbstractStack.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_STACKS)
 
 ABSTRACT_PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)PriorityQueue.c)
-$(ABSTRACT_PRIORITY_QUEUES): AbstractPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_PRIORITY_QUEUES): drv/AbstractPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_PRIORITY_QUEUES)
 
 ABSTRACT_COMPARATORS := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)Comparator.c)
-$(ABSTRACT_COMPARATORS): AbstractComparator.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_COMPARATORS): drv/AbstractComparator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_COMPARATORS)
 
 ABSTRACT_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)Iterator.c)
-$(ABSTRACT_ITERATORS): AbstractIterator.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_ITERATORS): drv/AbstractIterator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_ITERATORS)
 
 ABSTRACT_BIDIRECTIONAL_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)BidirectionalIterator.c)
-$(ABSTRACT_BIDIRECTIONAL_ITERATORS): AbstractBidirectionalIterator.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_BIDIRECTIONAL_ITERATORS): drv/AbstractBidirectionalIterator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_BIDIRECTIONAL_ITERATORS)
 
 ABSTRACT_LIST_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)ListIterator.c)
-$(ABSTRACT_LIST_ITERATORS): AbstractListIterator.drv; ./gencsource.sh $< $@ >$@
+$(ABSTRACT_LIST_ITERATORS): drv/AbstractListIterator.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ABSTRACT_LIST_ITERATORS)
+
+ABSTRACT_BIG_LIST_ITERATORS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/Abstract$(k)BigListIterator.c)
+$(ABSTRACT_BIG_LIST_ITERATORS): drv/AbstractBigListIterator.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(ABSTRACT_BIG_LIST_ITERATORS)
 
 #
 # Concrete implementations
 #
 
 OPEN_HASH_SETS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)OpenHashSet.c)
-$(OPEN_HASH_SETS): OpenHashSet.drv; ./gencsource.sh $< $@ >$@
+$(OPEN_HASH_SETS): drv/OpenHashSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(OPEN_HASH_SETS)
 
+OPEN_HASH_BIG_SETS := $(foreach k,$(TYPE_BIG), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)OpenHashBigSet.c)
+$(OPEN_HASH_BIG_SETS): drv/OpenHashBigSet.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(OPEN_HASH_BIG_SETS)
+
 LINKED_OPEN_HASH_SETS := $(foreach k,$(TYPE_NOBOOL), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)LinkedOpenHashSet.c)
-$(LINKED_OPEN_HASH_SETS): LinkedOpenHashSet.drv; ./gencsource.sh $< $@ >$@
+$(LINKED_OPEN_HASH_SETS): drv/LinkedOpenHashSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LINKED_OPEN_HASH_SETS)
 
 OPEN_CUSTOM_HASH_SETS := $(SOURCEDIR)/objects/ObjectOpenCustomHashSet.c
-$(OPEN_CUSTOM_HASH_SETS): OpenCustomHashSet.drv; ./gencsource.sh $< $@ >$@
+$(OPEN_CUSTOM_HASH_SETS): drv/OpenCustomHashSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(OPEN_CUSTOM_HASH_SETS)
 
 LINKED_OPEN_CUSTOM_HASH_SETS := $(SOURCEDIR)/objects/ObjectLinkedOpenCustomHashSet.c
-$(LINKED_OPEN_CUSTOM_HASH_SETS): LinkedOpenCustomHashSet.drv; ./gencsource.sh $< $@ >$@
+$(LINKED_OPEN_CUSTOM_HASH_SETS): drv/LinkedOpenCustomHashSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LINKED_OPEN_CUSTOM_HASH_SETS)
 
 ARRAY_SETS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArraySet.c)
-$(ARRAY_SETS): ArraySet.drv; ./gencsource.sh $< $@ >$@
+$(ARRAY_SETS): drv/ArraySet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ARRAY_SETS)
 
 AVL_TREE_SETS := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)AVLTreeSet.c)
-$(AVL_TREE_SETS): AVLTreeSet.drv; ./gencsource.sh $< $@ >$@
+$(AVL_TREE_SETS): drv/AVLTreeSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(AVL_TREE_SETS)
 
 RB_TREE_SETS := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)RBTreeSet.c)
-$(RB_TREE_SETS): RBTreeSet.drv; ./gencsource.sh $< $@ >$@
+$(RB_TREE_SETS): drv/RBTreeSet.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(RB_TREE_SETS)
 
 OPEN_HASH_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)OpenHashMap.c))
-$(OPEN_HASH_MAPS): OpenHashMap.drv; ./gencsource.sh $< $@ >$@
+$(OPEN_HASH_MAPS): drv/OpenHashMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(OPEN_HASH_MAPS)
 
 LINKED_OPEN_HASH_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)LinkedOpenHashMap.c))
-$(LINKED_OPEN_HASH_MAPS): LinkedOpenHashMap.drv; ./gencsource.sh $< $@ >$@
+$(LINKED_OPEN_HASH_MAPS): drv/LinkedOpenHashMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LINKED_OPEN_HASH_MAPS)
 
 OPEN_CUSTOM_HASH_MAPS := $(foreach v,$(TYPE), $(SOURCEDIR)/objects/Object2$(v)OpenCustomHashMap.c)
-$(OPEN_CUSTOM_HASH_MAPS): OpenCustomHashMap.drv; ./gencsource.sh $< $@ >$@
+$(OPEN_CUSTOM_HASH_MAPS): drv/OpenCustomHashMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(OPEN_CUSTOM_HASH_MAPS)
 
 LINKED_OPEN_CUSTOM_HASH_MAPS := $(foreach v,$(TYPE), $(SOURCEDIR)/objects/Object2$(v)LinkedOpenCustomHashMap.c)
-$(LINKED_OPEN_CUSTOM_HASH_MAPS): LinkedOpenCustomHashMap.drv; ./gencsource.sh $< $@ >$@
+$(LINKED_OPEN_CUSTOM_HASH_MAPS): drv/LinkedOpenCustomHashMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LINKED_OPEN_CUSTOM_HASH_MAPS)
 
 ARRAY_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)ArrayMap.c))
-$(ARRAY_MAPS): ArrayMap.drv; ./gencsource.sh $< $@ >$@
+$(ARRAY_MAPS): drv/ArrayMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ARRAY_MAPS)
 
 AVL_TREE_MAPS := $(foreach k,$(TYPE_NOBOOL_NOREF), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)AVLTreeMap.c))
-$(AVL_TREE_MAPS): AVLTreeMap.drv; ./gencsource.sh $< $@ >$@
+$(AVL_TREE_MAPS): drv/AVLTreeMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(AVL_TREE_MAPS)
 
 RB_TREE_MAPS := $(foreach k,$(TYPE_NOBOOL_NOREF), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)RBTreeMap.c))
-$(RB_TREE_MAPS): RBTreeMap.drv; ./gencsource.sh $< $@ >$@
+$(RB_TREE_MAPS): drv/RBTreeMap.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(RB_TREE_MAPS)
 
 ARRAY_LISTS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayList.c)
-$(ARRAY_LISTS): ArrayList.drv; ./gencsource.sh $< $@ >$@
+$(ARRAY_LISTS): drv/ArrayList.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ARRAY_LISTS)
 
+BIG_ARRAY_BIG_LISTS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BigArrayBigList.c)
+$(BIG_ARRAY_BIG_LISTS): drv/BigArrayBigList.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(BIG_ARRAY_BIG_LISTS)
+
 FRONT_CODED_LISTS := $(foreach k, Byte Short Int Long Char, $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayFrontCodedList.c)
-$(FRONT_CODED_LISTS): ArrayFrontCodedList.drv; ./gencsource.sh $< $@ >$@
+$(FRONT_CODED_LISTS): drv/ArrayFrontCodedList.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(FRONT_CODED_LISTS)
 
 HEAP_PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapPriorityQueue.c)
-$(HEAP_PRIORITY_QUEUES): HeapPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(HEAP_PRIORITY_QUEUES): drv/HeapPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(HEAP_PRIORITY_QUEUES)
 
 ARRAY_PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayPriorityQueue.c)
-$(ARRAY_PRIORITY_QUEUES): ArrayPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(ARRAY_PRIORITY_QUEUES): drv/ArrayPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ARRAY_PRIORITY_QUEUES)
 
+ARRAY_FIFO_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayFIFOQueue.c)
+$(ARRAY_FIFO_QUEUES): drv/ArrayFIFOQueue.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(ARRAY_FIFO_QUEUES)
+
 HEAP_SEMI_INDIRECT_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapSemiIndirectPriorityQueue.c)
-$(HEAP_SEMI_INDIRECT_PRIORITY_QUEUES): HeapSemiIndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(HEAP_SEMI_INDIRECT_PRIORITY_QUEUES): drv/HeapSemiIndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(HEAP_SEMI_INDIRECT_PRIORITY_QUEUES)
 
 HEAP_INDIRECT_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapIndirectPriorityQueue.c)
-$(HEAP_INDIRECT_PRIORITY_QUEUES): HeapIndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(HEAP_INDIRECT_PRIORITY_QUEUES): drv/HeapIndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(HEAP_INDIRECT_PRIORITY_QUEUES)
 
 ARRAY_INDIRECT_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayIndirectPriorityQueue.c)
-$(ARRAY_INDIRECT_PRIORITY_QUEUES): ArrayIndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
+$(ARRAY_INDIRECT_PRIORITY_QUEUES): drv/ArrayIndirectPriorityQueue.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ARRAY_INDIRECT_PRIORITY_QUEUES)
 
-HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapSesquiIndirectDoublePriorityQueue.c)
-$(HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUES): HeapSesquiIndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
-
-CSOURCES += $(HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUES)
-
-HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapIndirectDoublePriorityQueue.c)
-$(HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUES): HeapIndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
-
-CSOURCES += $(HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUES)
-
-ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayIndirectDoublePriorityQueue.c)
-$(ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUES): ArrayIndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
-
-CSOURCES += $(ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUES)
 
 #
 # Static containers
 #
 
 ITERATORS_STATIC := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Iterators.c)
-$(ITERATORS_STATIC): Iterators.drv; ./gencsource.sh $< $@ >$@
+$(ITERATORS_STATIC): drv/Iterators.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ITERATORS_STATIC)
 
 
+BIG_LIST_ITERATORS_STATIC := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BigListIterators.c)
+$(BIG_LIST_ITERATORS_STATIC): drv/BigListIterators.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(BIG_LIST_ITERATORS_STATIC)
+
+
 COLLECTIONS_STATIC := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Collections.c)
-$(COLLECTIONS_STATIC): Collections.drv; ./gencsource.sh $< $@ >$@
+$(COLLECTIONS_STATIC): drv/Collections.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(COLLECTIONS_STATIC)
 
 
 SETS_STATIC := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Sets.c)
-$(SETS_STATIC): Sets.drv; ./gencsource.sh $< $@ >$@
+$(SETS_STATIC): drv/Sets.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SETS_STATIC)
 
 
 SORTED_SETS_STATIC := $(foreach k,$(TYPE_NOBOOL), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)SortedSets.c)
-$(SORTED_SETS_STATIC): SortedSets.drv; ./gencsource.sh $< $@ >$@
+$(SORTED_SETS_STATIC): drv/SortedSets.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SORTED_SETS_STATIC)
 
 
 LISTS_STATIC := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Lists.c)
-$(LISTS_STATIC): Lists.drv; ./gencsource.sh $< $@ >$@
+$(LISTS_STATIC): drv/Lists.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(LISTS_STATIC)
 
 
+BIG_LISTS_STATIC := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BigLists.c)
+$(BIG_LISTS_STATIC): drv/BigLists.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(BIG_LISTS_STATIC)
+
+
 ARRAYS_STATIC := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Arrays.c)
-$(ARRAYS_STATIC): Arrays.drv; ./gencsource.sh $< $@ >$@
+$(ARRAYS_STATIC): drv/Arrays.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(ARRAYS_STATIC)
 
 
+BIG_ARRAYS_STATIC := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)BigArrays.c)
+$(BIG_ARRAYS_STATIC): drv/BigArrays.drv; ./gencsource.sh $< $@ >$@
+
+CSOURCES += $(BIG_ARRAYS_STATIC)
+
+
 PRIORITY_QUEUES_STATIC := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)PriorityQueues.c)
-$(PRIORITY_QUEUES_STATIC): PriorityQueues.drv; ./gencsource.sh $< $@ >$@
+$(PRIORITY_QUEUES_STATIC): drv/PriorityQueues.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(PRIORITY_QUEUES_STATIC)
 
 
 HEAPS_STATIC := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Heaps.c)
-$(HEAPS_STATIC): Heaps.drv; ./gencsource.sh $< $@ >$@
+$(HEAPS_STATIC): drv/Heaps.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(HEAPS_STATIC)
 
 
 SEMI_INDIRECT_HEAPS_STATIC := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)SemiIndirectHeaps.c)
-$(SEMI_INDIRECT_HEAPS_STATIC): SemiIndirectHeaps.drv; ./gencsource.sh $< $@ >$@
+$(SEMI_INDIRECT_HEAPS_STATIC): drv/SemiIndirectHeaps.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SEMI_INDIRECT_HEAPS_STATIC)
 
 
 INDIRECT_HEAPS_STATIC := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)IndirectHeaps.c)
-$(INDIRECT_HEAPS_STATIC): IndirectHeaps.drv; ./gencsource.sh $< $@ >$@
+$(INDIRECT_HEAPS_STATIC): drv/IndirectHeaps.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(INDIRECT_HEAPS_STATIC)
 
 
 FUNCTIONS_STATIC := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)Functions.c))
-$(FUNCTIONS_STATIC): Functions.drv; ./gencsource.sh $< $@ >$@
+$(FUNCTIONS_STATIC): drv/Functions.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(FUNCTIONS_STATIC)
 
 
 MAPS_STATIC := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)Maps.c))
-$(MAPS_STATIC): Maps.drv; ./gencsource.sh $< $@ >$@
+$(MAPS_STATIC): drv/Maps.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(MAPS_STATIC)
 
 
 SORTED_MAPS_STATIC := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)SortedMaps.c))
-$(SORTED_MAPS_STATIC): SortedMaps.drv; ./gencsource.sh $< $@ >$@
+$(SORTED_MAPS_STATIC): drv/SortedMaps.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(SORTED_MAPS_STATIC)
 
 
 COMPARATORS_STATIC := $(foreach k,$(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)Comparators.c)
-$(COMPARATORS_STATIC): Comparators.drv; ./gencsource.sh $< $@ >$@
+$(COMPARATORS_STATIC): drv/Comparators.drv; ./gencsource.sh $< $@ >$@
 
 CSOURCES += $(COMPARATORS_STATIC)
 
@@ -471,30 +490,94 @@ CSOURCES += $(COMPARATORS_STATIC)
 #
 
 BINIO_FRAGMENTS := $(foreach k,$(TYPE_NOREF), $(SOURCEDIR)/io/$(k)BinIOFragment.h)
-$(BINIO_FRAGMENTS): BinIOFragment.drv; ./gencsource.sh $< $@ >$@
+$(BINIO_FRAGMENTS): drv/BinIOFragment.drv; ./gencsource.sh $< $@ >$@
 
 CFRAGMENTS += $(BINIO_FRAGMENTS)
 
-$(SOURCEDIR)/io/BinIO.c: BinIO.drv $(BINIO_FRAGMENTS)
-	./gencsource.sh BinIO.drv $@ >$@
+$(SOURCEDIR)/io/BinIO.c: drv/BinIO.drv $(BINIO_FRAGMENTS)
+	./gencsource.sh drv/BinIO.drv $@ >$@
 
 CSOURCES += $(SOURCEDIR)/io/BinIO.c
 
 
 TEXTIO_FRAGMENTS := $(foreach k,$(TYPE_NOOBJ), $(SOURCEDIR)/io/$(k)TextIOFragment.h)
-$(TEXTIO_FRAGMENTS): TextIOFragment.drv; ./gencsource.sh $< $@ >$@
+$(TEXTIO_FRAGMENTS): drv/TextIOFragment.drv; ./gencsource.sh $< $@ >$@
 
 CFRAGMENTS += $(TEXTIO_FRAGMENTS)
 
-$(SOURCEDIR)/io/TextIO.c: TextIO.drv $(TEXTIO_FRAGMENTS)
-	./gencsource.sh TextIO.drv $@ >$@
+$(SOURCEDIR)/io/TextIO.c: drv/TextIO.drv $(TEXTIO_FRAGMENTS)
+	./gencsource.sh drv/TextIO.drv $@ >$@
 
 CSOURCES += $(SOURCEDIR)/io/TextIO.c
 
+#
+# Old sources, generated only with the old target
+#
 
+OPEN_DOUBLE_HASH_SETS := $(foreach k,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)OpenDoubleHashSet.c)
+$(OPEN_DOUBLE_HASH_SETS): drv/OpenDoubleHashSet.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(OPEN_DOUBLE_HASH_SETS)
+
+LINKED_OPEN_DOUBLE_HASH_SETS := $(foreach k,$(TYPE_NOBOOL), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)LinkedOpenDoubleHashSet.c)
+$(LINKED_OPEN_DOUBLE_HASH_SETS): drv/LinkedOpenDoubleHashSet.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(LINKED_OPEN_DOUBLE_HASH_SETS)
+
+OPEN_DOUBLE_CUSTOM_HASH_SETS := $(SOURCEDIR)/objects/ObjectOpenCustomDoubleHashSet.c
+$(OPEN_DOUBLE_CUSTOM_HASH_SETS): drv/OpenCustomDoubleHashSet.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(OPEN_DOUBLE_CUSTOM_HASH_SETS)
+
+LINKED_OPEN_DOUBLE_CUSTOM_HASH_SETS := $(SOURCEDIR)/objects/ObjectLinkedOpenCustomDoubleHashSet.c
+$(LINKED_OPEN_DOUBLE_CUSTOM_HASH_SETS): drv/LinkedOpenCustomDoubleHashSet.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(LINKED_OPEN_CUSTOM_DOUBLE_HASH_SETS)
+
+OPEN_DOUBLE_HASH_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)OpenDoubleHashMap.c))
+$(OPEN_DOUBLE_HASH_MAPS): drv/OpenDoubleHashMap.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(OPEN_DOUBLE_HASH_MAPS)
+
+LINKED_OPEN_DOUBLE_HASH_MAPS := $(foreach k,$(TYPE_NOBOOL), $(foreach v,$(TYPE), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)2$(v)LinkedOpenDoubleHashMap.c))
+$(LINKED_OPEN_DOUBLE_HASH_MAPS): drv/LinkedOpenDoubleHashMap.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(LINKED_OPEN_DOUBLE_HASH_MAPS)
+
+OPEN_CUSTOM_DOUBLE_HASH_MAPS := $(foreach v,$(TYPE), $(SOURCEDIR)/objects/Object2$(v)OpenCustomDoubleHashMap.c)
+$(OPEN_CUSTOM_DOUBLE_HASH_MAPS): drv/OpenCustomDoubleHashMap.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(OPEN_CUSTOM_DOUBLE_HASH_MAPS)
+
+LINKED_OPEN_CUSTOM_DOUBLE_HASH_MAPS := $(foreach v,$(TYPE), $(SOURCEDIR)/objects/Object2$(v)LinkedOpenCustomDoubleHashMap.c)
+$(LINKED_OPEN_CUSTOM_DOUBLE_HASH_MAPS): drv/LinkedOpenCustomDoubleHashMap.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(LINKED_OPEN_CUSTOM_DOUBLE_HASH_MAPS)
+
+INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k,$(TYPE_NOBOOL_NOOBJ), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)IndirectDoublePriorityQueue.c)
+$(INDIRECT_DOUBLE_PRIORITY_QUEUES): drv/IndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(INDIRECT_DOUBLE_PRIORITY_QUEUES)
+
+HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapSesquiIndirectDoublePriorityQueue.c)
+$(HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUES): drv/HeapSesquiIndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUES)
+
+HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)HeapIndirectDoublePriorityQueue.c)
+$(HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUES): drv/HeapIndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUES)
+
+ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUES := $(foreach k, $(TYPE_NOBOOL_NOREF), $(SOURCEDIR)/$(PACKAGE_$(k))/$(k)ArrayIndirectDoublePriorityQueue.c)
+$(ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUES): drv/ArrayIndirectDoublePriorityQueue.drv; ./gencsource.sh $< $@ >$@
+
+OLDCSOURCES += $(ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUES)
 
 
 JSOURCES = $(CSOURCES:.c=.java) # The list of generated Java source files
+OLDJSOURCES = $(OLDCSOURCES:.c=.java) 
+
 
 SOURCES = \
 	$(SOURCEDIR)/Function.java \
@@ -502,11 +585,17 @@ SOURCES = \
 	$(SOURCEDIR)/HashCommon.java \
 	$(SOURCEDIR)/BidirectionalIterator.java \
 	$(SOURCEDIR)/Stack.java \
+	$(SOURCEDIR)/BigList.java \
+	$(SOURCEDIR)/BigListIterator.java \
+	$(SOURCEDIR)/BigArrays.java \
 	$(SOURCEDIR)/PriorityQueue.java \
 	$(SOURCEDIR)/IndirectPriorityQueue.java \
 	$(SOURCEDIR)/IndirectDoublePriorityQueue.java \
 	$(SOURCEDIR)/Maps.java \
 	$(SOURCEDIR)/Arrays.java \
+	$(SOURCEDIR)/Swapper.java \
+	$(SOURCEDIR)/BigSwapper.java \
+	$(SOURCEDIR)/Size64.java \
 	$(SOURCEDIR)/PriorityQueues.java \
 	$(SOURCEDIR)/IndirectPriorityQueues.java \
 	$(SOURCEDIR)/IndirectDoublePriorityQueues.java \
@@ -520,12 +609,14 @@ SOURCES = \
 	$(SOURCEDIR)/io/FastBufferedInputStream.java \
 	$(SOURCEDIR)/io/FastBufferedOutputStream.java \
 	$(SOURCEDIR)/io/MeasurableInputStream.java \
+	$(SOURCEDIR)/io/MeasurableOutputStream.java \
+	$(SOURCEDIR)/io/MeasurableStream.java \
 	$(SOURCEDIR)/io/RepositionableStream.java # These are True Java Sources instead
 
 # We pass each generated Java source through the preprocessor. TEST compiles in the test code,
 # whereas ASSERTS compiles in some assertions (whose testing, of course, must be enabled in the JVM).
 
-$(JSOURCES): %.java: %.c
+$(JSOURCES) $(OLDJSOURCES): %.java: %.c
 	gcc -w -I. -ftabstop=4 $(if $(TEST),-DTEST,) $(if $(ASSERTS),-DASSERTS_CODE,) -DASSERTS_VALUE=$(if $(ASSERTS),true,false) -E -C -P $< >$@
 
 
@@ -540,4 +631,8 @@ clean:
 
 sources: $(JSOURCES)
 
+oldsources: $(OLDJSOURCES)
+
 csources: $(CSOURCES)
+
+oldcsources: $(OLDCSOURCES)

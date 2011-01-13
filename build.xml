@@ -8,11 +8,15 @@
 	<condition property="j2se.apiurl" value="${local.j2se.apiurl}"><isset property="local"/></condition>
 	<condition property="junit.apiurl" value="${local.junit.apiurl}"><isset property="local"/></condition>
 
-	<property name="src" value="java"/>
-	<property name="build" value="build"/>
-	<property name="docs" value="docs"/>
 	<property name="source" value="5"/>
 	<property name="j2se.apiurl" value="http://java.sun.com/j2se/5.0/docs/api/"/>
+
+	<path id="emma.lib" >
+		<pathelement location="${jar.base}/emma.jar" />
+		<pathelement location="${jar.base}/emma_ant.jar" />
+	</path>
+
+	<taskdef resource="emma_ant.properties" classpathref="emma.lib" />
 
 	<target name="init">
 		<mkdir dir="${build}"/>
@@ -25,24 +29,24 @@
 			optimize="on"
 			destdir="${build}"
 			source="${source}"
-			excludes="test/**"
 			memoryInitialSize="800M"
 			memoryMaximumSize="800M"
 			fork="yes"
+			target="1.5"
 		/>
 	</target>
 
 	<target name="compile-tests" depends="compile">
-		<javac srcdir="${src}" 
+		<javac srcdir="${test}" 
 			debug="on"
 			deprecation="on"
 			optimize="on"
 			destdir="${build}"
 			source="${source}"
-			includes="test/**"
 			memoryInitialSize="800M"
 			memoryMaximumSize="800M"
 			fork="yes"
+			target="1.5"
 		/>
 	</target>
 
@@ -68,10 +72,66 @@
 		</javadoc>
 	</target>
 
+	<target name="junit" depends="instrument" description="Runs JUnit tests">
+
+		<junit printsummary="yes" fork="yes" haltonfailure="off"  haltonerror="off">
+			<classpath location="${instrumented}/classes"/>
+			<classpath location="${src}"/>
+			<classpath location="${jar.base}/emma.jar"/>
+			<jvmarg value="-Xmx1G" />
+			<jvmarg value="-Demma.coverage.out.file=${coverage}/coverage.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+
+			<formatter type="xml"/>
+			<formatter type="plain"/>
+
+			<batchtest fork="yes" todir="${reports}">
+				<fileset dir="${instrumented}/classes">
+					<include name="**/*Test.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="reports">
+			<fileset dir="reports">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report todir="reports/html"/>
+		</junitreport>
+
+		<emma>
+			<report sourcepath="${src}" >
+				<fileset file="${coverage}/*a"/>
+				<txt outfile="coverage.txt" />
+				<html outfile="coverage.html" />
+			</report>
+		</emma>
+	</target>
+
+	<target name="instrument" depends="compile" description="Generate instrumented classes">
+		<emma>
+			<instr mode="fullcopy"
+				 outdir="${instrumented}"
+				 merge="no"
+				 metadatafile="${coverage}/metadata.emma"
+				 instrpath="${build}"
+			>
+				<filter excludes="*Test*"/>
+			</instr>
+		</emma>
+	</target>
+
+
+	<!-- ************		CLEAN		********************* -->
 	<target name="clean">
 		<delete dir="${build}"/>
+		<delete dir="${reports}"/>
+		<delete dir="${coverage}"/>
+		<delete dir="${instrumented}"/>
+		<delete dir="${docs}"/>
 		<delete>
 			<fileset dir="." includes="fastutil-*.jar"/>
 		</delete>
-	</target>
+  </target>
+
 </project>

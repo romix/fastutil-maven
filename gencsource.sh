@@ -124,6 +124,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define KEY_SUPER_GENERIC <? super K>\n"\
 "#define KEY_GENERIC_CAST (K)\n"\
 "#define KEY_GENERIC_ARRAY_CAST (K[])\n"\
+"#define KEY_GENERIC_BIG_ARRAY_CAST (K[][])\n"\
 "#else\n"\
 "#define KEY_GENERIC_CLASS KEY_CLASS\n"\
 "#define KEY_GENERIC_TYPE KEY_TYPE\n"\
@@ -133,6 +134,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define KEY_SUPER_GENERIC\n"\
 "#define KEY_GENERIC_CAST\n"\
 "#define KEY_GENERIC_ARRAY_CAST\n"\
+"#define KEY_GENERIC_BIG_ARRAY_CAST\n"\
 "#endif\n"\
 \
 "#if #valueclass(Object) || #valueclass(Reference)\n"\
@@ -193,6 +195,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define STD_SORTED_MAP ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}SortedMap\n\n"\
 "#endif\n"\
 "#define LIST ${TYPE_CAP[$k]}List\n\n"\
+"#define BIG_LIST ${TYPE_CAP[$k]}BigList\n\n"\
 "#define STACK ${TYPE_STD[$k]}Stack\n\n"\
 "#define PRIORITY_QUEUE ${TYPE_STD[$k]}PriorityQueue\n\n"\
 "#define INDIRECT_PRIORITY_QUEUE ${TYPE_STD[$k]}IndirectPriorityQueue\n\n"\
@@ -201,6 +204,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define KEY_ITERABLE ${TYPE_CAP2[$k]}Iterable\n\n"\
 "#define KEY_BIDI_ITERATOR ${TYPE_CAP2[$k]}BidirectionalIterator\n\n"\
 "#define KEY_LIST_ITERATOR ${TYPE_CAP2[$k]}ListIterator\n\n"\
+"#define KEY_BIG_LIST_ITERATOR ${TYPE_CAP2[$k]}BigListIterator\n\n"\
 "#define STD_KEY_ITERATOR ${TYPE_STD[$k]}Iterator\n\n"\
 "#define KEY_COMPARATOR ${TYPE_STD[$k]}Comparator\n\n"\
 \
@@ -225,12 +229,14 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define ABSTRACT_FUNCTION Abstract${TYPE_CAP[$k]}2${TYPE_CAP[$v]}Function\n"\
 "#define ABSTRACT_SORTED_MAP Abstract${TYPE_CAP[$k]}2${TYPE_CAP[$v]}SortedMap\n"\
 "#define ABSTRACT_LIST Abstract${TYPE_CAP[$k]}List\n\n"\
+"#define ABSTRACT_BIG_LIST Abstract${TYPE_CAP[$k]}BigList\n\n"\
 "#define SUBLIST ${TYPE_CAP[$k]}SubList\n\n"\
 "#define ABSTRACT_PRIORITY_QUEUE Abstract${TYPE_STD[$k]}PriorityQueue\n\n"\
 "#define ABSTRACT_STACK Abstract${TYPE_STD[$k]}Stack\n\n"\
 "#define KEY_ABSTRACT_ITERATOR Abstract${TYPE_CAP2[$k]}Iterator\n\n"\
 "#define KEY_ABSTRACT_BIDI_ITERATOR Abstract${TYPE_CAP2[$k]}BidirectionalIterator\n\n"\
 "#define KEY_ABSTRACT_LIST_ITERATOR Abstract${TYPE_CAP2[$k]}ListIterator\n\n"\
+"#define KEY_ABSTRACT_BIG_LIST_ITERATOR Abstract${TYPE_CAP2[$k]}BigListIterator\n\n"\
 "#if #keyclass(Object)\n"\
 "#define KEY_ABSTRACT_COMPARATOR Comparator\n\n"\
 "#else\n"\
@@ -253,6 +259,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define SETS ${TYPE_CAP[$k]}Sets\n\n"\
 "#define SORTED_SETS ${TYPE_CAP[$k]}SortedSets\n\n"\
 "#define LISTS ${TYPE_CAP[$k]}Lists\n\n"\
+"#define BIG_LISTS ${TYPE_CAP[$k]}BigLists\n\n"\
 "#define MAPS ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}Maps\n"\
 "#define FUNCTIONS ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}Functions\n"\
 "#define SORTED_MAPS ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}SortedMaps\n"\
@@ -261,7 +268,9 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define SEMI_INDIRECT_HEAPS ${TYPE_CAP2[$k]}SemiIndirectHeaps\n\n"\
 "#define INDIRECT_HEAPS ${TYPE_CAP2[$k]}IndirectHeaps\n\n"\
 "#define ARRAYS ${TYPE_CAP2[$k]}Arrays\n\n"\
+"#define BIG_ARRAYS ${TYPE_CAP2[$k]}BigArrays\n\n"\
 "#define ITERATORS ${TYPE_CAP2[$k]}Iterators\n\n"\
+"#define BIG_LIST_ITERATORS ${TYPE_CAP2[$k]}BigListIterators\n\n"\
 "#define COMPARATORS ${TYPE_CAP2[$k]}Comparators\n\n"\
 \
 \
@@ -277,7 +286,10 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 \
 \
 "#define OPEN_HASH_SET ${TYPE_CAP[$k]}${Linked}Open${Custom}HashSet\n\n"\
+"#define OPEN_HASH_BIG_SET ${TYPE_CAP[$k]}${Linked}Open${Custom}HashBigSet\n\n"\
+"#define OPEN_DOUBLE_HASH_SET ${TYPE_CAP[$k]}${Linked}Open${Custom}DoubleHashSet\n\n"\
 "#define OPEN_HASH_MAP ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}${Linked}Open${Custom}HashMap\n\n"\
+"#define OPEN_DOUBLE_HASH_MAP ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}${Linked}Open${Custom}DoubleHashMap\n\n"\
 "#define ARRAY_SET ${TYPE_CAP[$k]}ArraySet\n\n"\
 "#define ARRAY_MAP ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}ArrayMap\n\n"\
 "#define LINKED_OPEN_HASH_SET ${TYPE_CAP[$k]}LinkedOpenHashSet\n\n"\
@@ -286,12 +298,14 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define AVL_TREE_MAP ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}AVLTreeMap\n\n"\
 "#define RB_TREE_MAP ${TYPE_CAP[$k]}2${TYPE_CAP[$v]}RBTreeMap\n\n"\
 "#define ARRAY_LIST ${TYPE_CAP[$k]}ArrayList\n\n"\
+"#define BIG_ARRAY_BIG_LIST ${TYPE_CAP[$k]}BigArrayBigList\n\n"\
 "#define ARRAY_FRONT_CODED_LIST ${TYPE_CAP[$k]}ArrayFrontCodedList\n\n"\
 "#define HEAP_PRIORITY_QUEUE ${TYPE_CAP2[$k]}HeapPriorityQueue\n\n"\
 "#define HEAP_SEMI_INDIRECT_PRIORITY_QUEUE ${TYPE_CAP2[$k]}HeapSemiIndirectPriorityQueue\n\n"\
 "#define HEAP_INDIRECT_PRIORITY_QUEUE ${TYPE_CAP2[$k]}HeapIndirectPriorityQueue\n\n"\
 "#define HEAP_SESQUI_INDIRECT_DOUBLE_PRIORITY_QUEUE ${TYPE_CAP2[$k]}HeapSesquiIndirectDoublePriorityQueue\n\n"\
 "#define HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUE ${TYPE_CAP2[$k]}HeapIndirectDoublePriorityQueue\n\n"\
+"#define ARRAY_FIFO_QUEUE ${TYPE_CAP2[$k]}ArrayFIFOQueue\n\n"\
 "#define ARRAY_PRIORITY_QUEUE ${TYPE_CAP2[$k]}ArrayPriorityQueue\n\n"\
 "#define ARRAY_INDIRECT_PRIORITY_QUEUE ${TYPE_CAP2[$k]}ArrayIndirectPriorityQueue\n\n"\
 "#define ARRAY_INDIRECT_DOUBLE_PRIORITY_QUEUE ${TYPE_CAP2[$k]}ArrayIndirectDoublePriorityQueue\n\n"\
@@ -356,6 +370,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define ENTRY_GET_KEY get${TYPE_STD[$k]}Key\n"\
 "#define PARSE_KEY parse${TYPE_STD[$k]}\n"\
 "#define LOAD_KEYS load${TYPE_STD[$k]}s\n"\
+"#define LOAD_KEYS_BIG load${TYPE_STD[$k]}sBig\n"\
 "#define STORE_KEYS store${TYPE_STD[$k]}s\n"\
 \
 \
@@ -395,16 +410,13 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#if #keyclass(Object)\n"\
 "#ifdef Custom\n"\
 "#define KEY_EQUALS(x,y) ( strategy.equals( (x), (y) ) )\n"\
-"#define KEY_EQUALS_HASH(x,h,y) ( (y) != HashCommon.REMOVED && (h) == strategy.hashCode(y) && strategy.equals((x), (y)) )\n"\
 "#else\n"\
 "#define KEY_EQUALS(x,y) ( (x) == null ? (y) == null : (x).equals(y) )\n"\
 "#define KEY_EQUALS_NOT_NULL(x,y) ( (x).equals(y) )\n"\
-"#define KEY_EQUALS_HASH(x,h,y) ( (y) == null ? (x) == null : (h) == (y).hashCode() && (y).equals(x) )\n"\
 "#endif\n"\
 "#else\n"\
 "#define KEY_EQUALS(x,y) ( (x) == (y) )\n"\
 "#define KEY_EQUALS_NOT_NULL(x,y) ( (x) == (y) )\n"\
-"#define KEY_EQUALS_HASH(x,h,y) ( (x) == (y) )\n"\
 "#endif\n\n"\
 \
 "#if #valueclass(Object)\n"\
@@ -428,12 +440,18 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 \
 "#if #keyclass(Object)\n"\
 "#ifdef Custom\n"\
-"#define KEY2INT(x) ( strategy.hashCode(x) )\n"\
+"#define KEY2JAVAHASH(x) ( strategy.hashCode(x) )\n"\
+"#define KEY2INTHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( strategy.hashCode(x) ) )\n"\
+"#define KEY2LONGHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)strategy.hashCode(x) ) )\n"\
 "#else\n"\
-"#define KEY2INT(x) ( (x) == null ? 0 : (x).hashCode() )\n"\
+"#define KEY2JAVAHASH(x) ( (x) == null ? 0 : (x).hashCode() )\n"\
+"#define KEY2INTHASH(x) ( (x) == null ? 0x87fcd5c : it.unimi.dsi.fastutil.HashCommon.murmurHash3( (x).hashCode() ) )\n"\
+"#define KEY2LONGHASH(x) ( (x) == null ? 0x810879608e4259ccL : it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)(x).hashCode() ) )\n"\
 "#endif\n"\
 "#else\n"\
-"#define KEY2INT(x) (System.identityHashCode(x))\n"\
+"#define KEY2JAVAHASH(x) ( (x) == null ? 0 : System.identityHashCode(x) )\n"\
+"#define KEY2INTHASH(x) ( (x) == null ? 0x87fcd5c : it.unimi.dsi.fastutil.HashCommon.murmurHash3( System.identityHashCode(x) ) )\n"\
+"#define KEY2LONGHASH(x) ( (x) == null ? 0x810879608e4259ccL : it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)System.identityHashCode(x) ) )\n"\
 "#endif\n"\
 \
 "#define KEY_CMP(x,y) ( ((Comparable<KEY_GENERIC_CLASS>)(x)).compareTo(y) )\n"\
@@ -465,19 +483,35 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define KEY_LESSEQ(x,y) ( (x) <= (y) )\n"\
 "#endif\n"\
 \
-"#if #keyclass(Float) || #keyclass(Double) || #keyclass(Long)\n"\
+"#if #keyclass(Float)\n"\
 "#define KEY_NULL (0)\n"\
-"#define KEY2INT(x) it.unimi.dsi.fastutil.HashCommon.${TYPE[$k]}2int(x)\n"\
+"#define KEY2JAVAHASH(x) it.unimi.dsi.fastutil.HashCommon.float2int(x)\n"\
+"#define KEY2INTHASH(x) it.unimi.dsi.fastutil.HashCommon.murmurHash3( it.unimi.dsi.fastutil.HashCommon.float2int(x) )\n"\
+"#define KEY2LONGHASH(x) it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)it.unimi.dsi.fastutil.HashCommon.float2int(x) )\n"\
+"#elif #keyclass(Double)\n"\
+"#define KEY_NULL (0)\n"\
+"#define KEY2JAVAHASH(x) it.unimi.dsi.fastutil.HashCommon.double2int(x)\n"\
+"#define KEY2INTHASH(x) (int)it.unimi.dsi.fastutil.HashCommon.murmurHash3(Double.doubleToRawLongBits(x))\n"\
+"#define KEY2LONGHASH(x) it.unimi.dsi.fastutil.HashCommon.murmurHash3(Double.doubleToRawLongBits(x))\n"\
+"#elif #keyclass(Long)\n"\
+"#define KEY_NULL (0)\n"\
+"#define KEY2JAVAHASH(x) it.unimi.dsi.fastutil.HashCommon.long2int(x)\n"\
+"#define KEY2INTHASH(x) (int)it.unimi.dsi.fastutil.HashCommon.murmurHash3(x)\n"\
+"#define KEY2LONGHASH(x) it.unimi.dsi.fastutil.HashCommon.murmurHash3(x)\n"\
 "#elif #keyclass(Boolean)\n"\
 "#define KEY_NULL (false)\n"\
-"#define KEY2INT(x) (x ? 1231 : 1237)\n"\
+"#define KEY2JAVAHASH(x) ((x) ? 1231 : 1237)\n"\
+"#define KEY2INTHASH(x) ((x) ? 0xfab5368 : 0xcba05e7b)\n"\
+"#define KEY2LONGHASH(x) ((x) ? 0x74a19fc8b6428188L : 0xbaeca2031a4fd9ecL)\n"\
 "#else\n"\
 "#if #keyclass(Integer)\n"\
 "#define KEY_NULL (0)\n"\
 "#else\n"\
 "#define KEY_NULL ((KEY_TYPE)0)\n"\
 "#endif\n"\
-"#define KEY2INT(x) (x)\n"\
+"#define KEY2JAVAHASH(x) (x)\n"\
+"#define KEY2INTHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( (x) ) )\n"\
+"#define KEY2LONGHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)(x) ) )\n"\
 "#endif\n"\
 \
 "#endif\n"\
@@ -493,9 +527,9 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define VALUE2OBJ(x) (x)\n"\
 \
 "#if #valueclass(Object)\n"\
-"#define VALUE2INT(x) ( (x) == null ? 0 : (x).hashCode() )\n"\
+"#define VALUE2JAVAHASH(x) ( (x) == null ? 0 : (x).hashCode() )\n"\
 "#else\n"\
-"#define VALUE2INT(x) (System.identityHashCode(x))\n"\
+"#define VALUE2JAVAHASH(x) ( (x) == null ? 0 : System.identityHashCode(x) )\n"\
 "#endif\n"\
 \
 "#define VALUE_NULL (null)\n"\
@@ -513,17 +547,17 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 \
 "#if #valueclass(Float) || #valueclass(Double) || #valueclass(Long)\n"\
 "#define VALUE_NULL (0)\n"\
-"#define VALUE2INT(x) it.unimi.dsi.fastutil.HashCommon.${TYPE[$v]}2int(x)\n"\
+"#define VALUE2JAVAHASH(x) it.unimi.dsi.fastutil.HashCommon.${TYPE[$v]}2int(x)\n"\
 "#elif #valueclass(Boolean)\n"\
 "#define VALUE_NULL (false)\n"\
-"#define VALUE2INT(x) (x ? 1231 : 1237)\n"\
+"#define VALUE2JAVAHASH(x) (x ? 1231 : 1237)\n"\
 "#else\n"\
 "#if #valueclass(Integer)\n"\
 "#define VALUE_NULL (0)\n"\
 "#else\n"\
 "#define VALUE_NULL ((VALUE_TYPE)0)\n"\
 "#endif\n"\
-"#define VALUE2INT(x) (x)\n"\
+"#define VALUE2JAVAHASH(x) (x)\n"\
 "#endif\n"\
 \
 "#define OBJECT_DEFAULT_RETURN_VALUE (null)\n"\
