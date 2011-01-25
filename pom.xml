@@ -20,10 +20,11 @@
   </licenses>
   <distributionManagement>
     <repository>
-      <id>elehack.net</id>
-      <name>elehack.net Maven repository</name>
-      <url>scpexe://elehack.net/srv/www/maven</url>
+      <id>grouplens.org</id>
+      <name>GroupLens Maven repository</name>
+      <url>scpexe://caesar.cs.umn.edu/web/research01/reflens.grouplens.org/maven</url>
     </repository>
+    <downloadUrl>http://reflens.grouplens.org/maven</downloadUrl>
   </distributionManagement>
   <scm>
     <connection>scm:git:git://repo.or.cz/fastutil-maven.git</connection>
