@@ -25,15 +25,6 @@
     </license>
   </licenses>
 
-  <distributionManagement>
-    <repository>
-      <id>grouplens.org</id>
-      <name>GroupLens Maven repository</name>
-      <url>scpexe://caesar.cs.umn.edu/web/research01/reflens.grouplens.org/maven</url>
-    </repository>
-    <downloadUrl>http://reflens.grouplens.org/maven</downloadUrl>
-  </distributionManagement>
-
   <scm>
     <connection>scm:git:git://repo.or.cz/fastutil-maven.git</connection>
     <developerConnection>scm:git:ssh://repo.or.cz/srv/git/fastutil-maven.git</developerConnection>
