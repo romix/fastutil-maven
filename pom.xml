@@ -141,14 +141,14 @@
 	    <goals>
 	      <goal>exec</goal>
 	    </goals>
+	    <configuration>
+	      <executable>make</executable>
+	      <arguments>
+	        <argument>sources</argument>
+	      </arguments>
+	    </configuration>
 	  </execution>
 	</executions>
-	<configuration>
-	  <executable>make</executable>
-	  <arguments>
-	    <argument>sources</argument>
-	  </arguments>
-	</configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
