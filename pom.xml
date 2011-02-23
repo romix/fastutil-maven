@@ -4,20 +4,27 @@
   <groupId>it.unimi.dsi</groupId>
   <artifactId>fastutil</artifactId>
   <version>6.1.0</version>
-  <name>fastutil</name>
   <packaging>jar</packaging>
-  <description>fastutil extends the Java™ Collections Framework by
-    providing type-specific maps, sets, lists and queues with a small
-    memory footprint and fast access and insertion; it also includes a
-    fast I/O API for binary and text files. It is free software
-    distributed under the GNU Lesser General Public License. </description>
+
+  <name>fastutil</name>
+  <description>
+    fastutil extends the Java™ Collections Framework by providing
+    type-specific maps, sets, lists and queues with a small memory
+    footprint and fast access and insertion; it also includes a fast
+    I/O API for binary and text files. It is free software distributed
+    under the GNU Lesser General Public License.  This packaging is
+    not provided by the original developer, so do not contact him
+    about Maven package issues.
+  </description>
   <url>http://fastutil.dsi.unimi.it/</url>
+
   <licenses>
     <license>
       <name>GNU Lesser General Public License (LGPL) 2.1 or later</name>
       <url>http://www.gnu.org/copyleft/lesser.html</url>
     </license>
   </licenses>
+
   <distributionManagement>
     <repository>
       <id>grouplens.org</id>
@@ -26,12 +33,41 @@
     </repository>
     <downloadUrl>http://reflens.grouplens.org/maven</downloadUrl>
   </distributionManagement>
+
   <scm>
     <connection>scm:git:git://repo.or.cz/fastutil-maven.git</connection>
     <developerConnection>scm:git:ssh://repo.or.cz/srv/git/fastutil-maven.git</developerConnection>
-    <tag>maven</tag>
     <url>http://repo.or.cz/w/fastutil-maven.git</url>
   </scm>
+
+  <developers>
+    <developer>
+      <id>vigna</id>
+      <name>Sebastiano Vigna</name>
+      <url>http://vigna.dsi.unimi.it/</url>
+      <organization>Computer Science Department, University of
+      Milano</organization>
+      <organizationUrl>http://www.dsi.unimi.it/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>ekstrand</id>
+      <name>Michael Ekstrand</name>
+      <email>ekstrand@cs.umn.edu</email>
+      <url>http://www-users.cs.umn.edu/~ekstrand</url>
+      <organization>GroupLens Research, Dept. of Computer Science,
+      University of Minnesota</organization>
+      <organizationUrl>http://www.grouplens.org</organizationUrl>
+      <roles>
+        <role>packager</role>
+      </roles>
+      <timezone>-6</timezone>
+    </developer>
+  </developers>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
