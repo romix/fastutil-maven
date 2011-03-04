@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.unimi.dsi</groupId>
   <artifactId>fastutil</artifactId>
-  <version>6.1.0</version>
+  <version>6.2.1</version>
   <packaging>jar</packaging>
 
   <name>fastutil</name>
@@ -20,15 +20,15 @@
 
   <licenses>
     <license>
-      <name>GNU Lesser General Public License (LGPL) 2.1 or later</name>
-      <url>http://www.gnu.org/copyleft/lesser.html</url>
+      <name>Apache Software License, version 2.0 (ASL2.0)</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
     </license>
   </licenses>
 
   <scm>
-    <connection>scm:git:git://repo.or.cz/fastutil-maven.git</connection>
-    <developerConnection>scm:git:ssh://repo.or.cz/srv/git/fastutil-maven.git</developerConnection>
-    <url>http://repo.or.cz/w/fastutil-maven.git</url>
+    <connection>scm:git:git://github.com/elehack/fastutil-maven.git</connection>
+    <developerConnection>scm:git:ssh://github.com/elehack/fastutil-maven.git</developerConnection>
+    <url>https://github.com/elehack/fastutil-maven</url>
   </scm>
 
   <developers>
