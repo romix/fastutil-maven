@@ -1,5 +1,5 @@
 /*		 
- * Copyright (C) 2002-2010 Sebastiano Vigna 
+ * Copyright (C) 2002-2011 Sebastiano Vigna 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -262,11 +262,6 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 	}
 
 	public boolean add( final KEY_GENERIC_TYPE k ) {
-		final KEY_GENERIC_TYPE key[][] = this.key;
-		final boolean used[][] = this.used;
-		final int baseMask = this.baseMask;
-		final int segmentMask = this.segmentMask;
-
 		final long h = KEY2LONGHASH( k );
 
 		// The starting point.
@@ -274,10 +269,10 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 		int base = (int)( ( h & mask ) >>> BigArrays.SEGMENT_SHIFT );
 
 		// There's always an unused entry.
-		while( used[ base ][ displ ] && ! KEY_EQUALS( k, key[ base ][ displ ] ) ) 
+		while( used[ base ][ displ ] ) {
+			if ( KEY_EQUALS( k, key[ base ][ displ ] ) ) return false;
 			base = ( base + ( ( displ = ( displ + 1 ) & segmentMask ) == 0 ? 1 : 0 ) ) & baseMask;
-
-		if ( used[ base ][ displ ] ) return false;
+		}
 
 		used[ base ][ displ ] = true;
 		key[ base ][ displ ] = k;
@@ -326,10 +321,6 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 
 	@SuppressWarnings("unchecked")
 	public boolean remove( final KEY_TYPE k ) {
-		final KEY_GENERIC_TYPE[][] key = this.key;
-		final boolean[][] used = this.used;
-		final int baseMask = this.baseMask;
-		final int segmentMask = this.segmentMask;
 		final long h = KEY2LONGHASH( k );
 
 		// The starting point.
@@ -337,25 +328,21 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 		int base = (int)( ( h & mask ) >>> BigArrays.SEGMENT_SHIFT );
 
 		// There's always an unused entry.
-		while( used[ base ][ displ ] && ! KEY_EQUALS( k, key[ base ][ displ ] ) ) 
+		while( used[ base ][ displ ] ) {
+			if ( KEY_EQUALS( k, key[ base ][ displ ] ) ) {
+				size--;
+				shiftKeys( base * (long)BigArrays.SEGMENT_SIZE + displ );
+				if ( ASSERTS ) checkTable();
+				return true;
+			}
 			base = ( base + ( ( displ = ( displ + 1 ) & segmentMask ) == 0 ? 1 : 0 ) ) & baseMask;
+		}
 
-		if ( ! used[ base ][ displ ] ) return false;
-
-		shiftKeys( base * (long)BigArrays.SEGMENT_SIZE + displ );
-
-		size--;
-		if ( ASSERTS ) checkTable();
-		return true;
+		return false;
 	}
 	 
 	@SuppressWarnings("unchecked")
 	public boolean contains( final KEY_TYPE k ) {
-		final KEY_GENERIC_TYPE key[][] = this.key;
-		final boolean used[][] = this.used;
-		final int baseMask = this.baseMask;
-		final int segmentMask = this.segmentMask;
-
 		final long h = KEY2LONGHASH( k );
 
 		// The starting point.
@@ -363,10 +350,12 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 		int base = (int)( ( h & mask ) >>> BigArrays.SEGMENT_SHIFT );
 
 		// There's always an unused entry.
-		while( used[ base ][ displ ] && ! KEY_EQUALS( k, key[ base ][ displ ] ) ) 
+		while( used[ base ][ displ ] ) {
+			if ( KEY_EQUALS( k, key[ base ][ displ ] ) ) return true; 
 			base = ( base + ( ( displ = ( displ + 1 ) & segmentMask ) == 0 ? 1 : 0 ) ) & baseMask;
+		}
 
-		return used[ base ][ displ ];
+		return false;
 	}
 
 
@@ -430,8 +419,8 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 		@SuppressWarnings("unchecked")
 		public void remove() {
 			if ( lastBase == -1 ) throw new IllegalStateException();
-			shiftKeys( lastBase * (long)BigArrays.SEGMENT_SIZE + lastDispl );
 			size--;
+			shiftKeys( lastBase * (long)BigArrays.SEGMENT_SIZE + lastDispl );
 			lastBase = -1; // You can no longer remove this entry.
 
 			if ( ASSERTS ) checkTable();
