@@ -34,7 +34,7 @@
 
   <scm>
     <connection>scm:git:git://github.com/elehack/fastutil-maven.git</connection>
-    <developerConnection>scm:git:ssh://github.com/elehack/fastutil-maven.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:elehack/fastutil-maven.git</developerConnection>
     <url>https://github.com/elehack/fastutil-maven</url>
   </scm>
 
