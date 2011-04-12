@@ -11,7 +11,7 @@
   <groupId>it.unimi.dsi</groupId>
   <artifactId>fastutil</artifactId>
   <version>6.2.2</version>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <name>fastutil</name>
   <description>
@@ -178,6 +178,19 @@
             <exclude>CHANGES</exclude>
             <exclude>build.xml</exclude>
           </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.4</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-RequiredExecutionEnvironment>J2SE-1.5,JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Export-Package>${project.groupId}.*;version="${project.version}"</Export-Package>
+          </instructions>
         </configuration>
       </plugin>
     </plugins>
