@@ -178,7 +178,7 @@
 	  <code>Object</code> is not used (see, e.g., {@link it.unimi.dsi.fastutil.PriorityQueue}).
 	  
     <p>Since there are eight primitive types in Java, and we support
-    reference-based containers, we get 1775 (!) classes (some nonsensical
+    reference-based containers, we get 1797 (!) classes (some nonsensical
     classes, such as <code>Boolean2BooleanAVLTreeMap</code>, are not
     generated). Many classes are generated just to mimic the hierarchy of
     {@link java.util} so to redistribute common code in a similar way. There
@@ -219,7 +219,7 @@
 	<tr><td>PriorityQueue&dagger;<td>AbstractPriorityQueue&dagger;<td>HeapPriorityQueue, ArrayPriorityQueue, ArrayFIFOQueue
 	<tr><td>IndirectPriorityQueue&dagger;<td>AbstractIndirectPriorityQueue&dagger;<td>HeapSemiIndirectPriorityQueue, HeapIndirectPriorityQueue, ArrayIndirectPriorityQueue
 	<tr><td>Stack&dagger;<td>AbstractStack&dagger;<td>ArrayList
-	<tr><td>Iterator, BigListIterator&dagger;<td>AbstractIterator, AbstractBigListIterator
+	<tr><td>Iterator, BigListIterator&dagger;<td>AbstractIterator, AbstractListIterator, AbstractBigListIterator
 	<tr><td>Comparator<td>AbstractComparator
 	<tr><td>BidirectionalIterator&dagger;<td>AbstractBidirectionalIterator
 	<tr><td>ListIterator<td>AbstractListIterator
@@ -510,7 +510,29 @@
     it.unimi.dsi.fastutil.ints.IntSemiIndirectHeaps semi-indirect heaps} and
     {@linkplain it.unimi.dsi.fastutil.ints.IntIndirectHeaps indirect heaps}. There are
     also quicksort and mergesort implementations that use arbitrary type-specific comparators.
-
+    
+    <p><code>fastutil</code> offers also a less common choice&mdash;a very tuned
+    implementation of {@linkplain it.unimi.dsi.fastutil.ints.IntArrays#radixSort(int[],int,int) radix sort} for
+    all primitive types. It is significantly faster than quicksort already at small sizes (say, more than 10000 elements), and should
+    be considered the sorting algorithm of choice if you do not need a generic comparator.
+    
+    <p>There are several variants provided. First of all you can radix sort in parallel
+    {@linkplain it.unimi.dsi.fastutil.ints.IntArrays#radixSort(int[],int[], int, int) two} or
+	{@linkplain it.unimi.dsi.fastutil.ints.IntArrays#radixSort(int[][],int,int) even more} arrays. You
+	can also perform {@linkplain it.unimi.dsi.fastutil.ints.IntArrays#radixSortIndirect(int[],int[],int,int,boolean) indirect} sorts,
+	for instance if you want to compute the sorting permutation of an array. 
+	 
+     <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+     McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+     and further improved using the digit-oracle idea described by
+     Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+     <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+     Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008). The basic algorithm is not
+     stable, but this is immaterial for arrays of primitive types. For the indirect case, there is a parameter
+     specifying whether the algorithm should be stable.
+    
+	
+    
     <h3>Iterators and Comparators</h3>
 
     <P><code>fastutil</code> provides type-specific iterators and
