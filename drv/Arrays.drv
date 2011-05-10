@@ -32,7 +32,8 @@ package PACKAGE;
 
 import it.unimi.dsi.fastutil.Arrays;
 import it.unimi.dsi.fastutil.Hash;
-
+import it.unimi.dsi.fastutil.ints.IntArrays;
+import java.util.Random;
 
 #if #keys(primitive)
 
@@ -376,7 +377,7 @@ public class ARRAYS {
 	}
 
 	private static final int SMALL = 7;
-	private static final int MEDIUM = 40;
+	private static final int MEDIUM = 50;
 
 	private static KEY_GENERIC void swap( final KEY_GENERIC_TYPE x[], final int a, final int b ) {
 		final KEY_GENERIC_TYPE t = x[ a ];
@@ -397,6 +398,63 @@ public class ARRAYS {
 			( bc > 0 ? b : ac > 0 ? c : a ) );
 	}
 
+
+	private static KEY_GENERIC void selectionSort( final KEY_GENERIC_TYPE[] a, final int from, final int to, final KEY_COMPARATOR KEY_GENERIC comp ) {
+		for( int i = from; i < to - 1; i++ ) {
+			int m = i;
+			for( int j = i + 1; j < to; j++ ) if ( comp.compare( a[ j ], a[ m ] ) < 0 ) m = j;
+			if ( m != i ) {
+				final KEY_GENERIC_TYPE u = a[ i ];
+				a[ i ] = a[ m ];
+				a[ m ] = u;
+			}
+		}
+	}
+
+
+	private static KEY_GENERIC void insertionSort( final KEY_GENERIC_TYPE[] a, final int from, final int to, final KEY_COMPARATOR KEY_GENERIC comp  ) {
+		for ( int i = from; ++i < to; ) { 
+			KEY_GENERIC_TYPE t = a[ i ];
+			int j = i;
+			for ( KEY_GENERIC_TYPE u = a[ j - 1 ]; comp.compare( t, u ) < 0; u = a[ --j - 1 ] ) {
+				a[ j ] = u;
+				if ( from == j - 1 ) {
+					--j;
+					break;
+				}
+			}
+			a[ j ] = t;
+		}
+	}
+
+	private static KEY_GENERIC void selectionSort( final KEY_GENERIC_TYPE[] a, final int from, final int to ) {
+		for( int i = from; i < to - 1; i++ ) {
+			int m = i;
+			for( int j = i + 1; j < to; j++ ) if ( KEY_LESS( a[ j ], a[ m ] ) ) m = j;
+			if ( m != i ) {
+				final KEY_GENERIC_TYPE u = a[ i ];
+				a[ i ] = a[ m ];
+				a[ m ] = u;
+			}
+		}
+	}
+	
+	private static KEY_GENERIC void insertionSort( final KEY_GENERIC_TYPE[] a, final int from, final int to ) {
+		for ( int i = from; ++i < to; ) { 
+			KEY_GENERIC_TYPE t = a[ i ];
+			int j = i;
+			for ( KEY_GENERIC_TYPE u = a[ j - 1 ]; KEY_LESS( t, u ); u = a[ --j - 1 ] ) {
+				a[ j ] = u;
+				if ( from == j - 1 ) {
+					--j;
+					break;
+				}
+			}
+			a[ j ] = t;
+		}
+	}
+
+
 	/** Sorts the specified range of elements according to the order induced by the specified
 	 * comparator using quicksort. 
 	 * 
@@ -412,10 +470,10 @@ public class ARRAYS {
 	 */
 	public static KEY_GENERIC void quickSort( final KEY_GENERIC_TYPE[] x, final int from, final int to, final KEY_COMPARATOR KEY_GENERIC comp ) {
 		final int len = to - from;
-		// Insertion sort on smallest arrays
+		
+		// Selection sort on smallest arrays
 		if ( len < SMALL ) {
-			for ( int i = from; i < to; i++ )
-			for ( int j = i; j > from && comp.compare( x[ j - 1 ], x[ j ] ) > 0; j-- ) swap( x, j, j - 1 );
+			selectionSort( x, from, to, comp );
 			return;
 		}
 
@@ -506,10 +564,10 @@ public class ARRAYS {
 	@SuppressWarnings("unchecked")
 	public static KEY_GENERIC void quickSort( final KEY_GENERIC_TYPE[] x, final int from, final int to ) {
 		final int len = to - from;
-		// Insertion sort on smallest arrays
+
+		// Selection sort on smallest arrays
 		if ( len < SMALL ) {
-			for ( int i = from; i < to; i++ )
-			for ( int j = i; j > from && KEY_LESS( x[ j ], x[ j - 1 ] ); j-- ) swap( x, j, j - 1 );
+			selectionSort( x, from, to );
 			return;
 		}
 
@@ -588,10 +646,8 @@ public class ARRAYS {
 		
 		// Insertion sort on smallest arrays
 		if ( len < SMALL ) {
-		    for ( int i = from; i < to; i++ ) 
-		    	for ( int j = i; j > from && KEY_LESS( a[ j ], a[ j - 1 ] ); j-- ) 
-		    		swap( a, j, j - 1 );
-		    return;
+			insertionSort( a, from, to );
+			return;
 		}
 	
 		// Recursively sort halves of a into supp
@@ -655,11 +711,9 @@ public class ARRAYS {
 		
 		// Insertion sort on smallest arrays
 		if ( len < SMALL ) {
-		    for ( int i = from; i < to; i++ ) 
-		    	for ( int j = i; j > from && comp.compare( a[ j - 1 ], a[ j ] ) > 0; j-- ) 
-		    		swap( a, j, j - 1 );
-		    return;
-		}
+			insertionSort( a, from, to, comp );
+			return;
+    	}
 	
 		// Recursively sort halves of a into supp
 		final int mid = ( from + to ) >>> 1;
@@ -721,7 +775,7 @@ public class ARRAYS {
 	 * @param to  the index of the last element (exclusive) to be searched.
 	 * @param key the value to be searched for.
 	 * @return index of the search key, if it is contained in the array;
-	 *             otherwise, <tt>(-(<i>insertion point</i>) - 1)</tt>.  The <i>insertion
+	 *             otherwise, <samp>(-(<i>insertion point</i>) - 1)</samp>.  The <i>insertion
 	 *             point</i> is defined as the the point at which the value would
 	 *             be inserted into the array: the index of the first
 	 *             element greater than the key, or the length of the array, if all
@@ -759,7 +813,7 @@ public class ARRAYS {
 	 * @param a the array to be searched.
 	 * @param key the value to be searched for.
 	 * @return index of the search key, if it is contained in the array;
-	 *             otherwise, <tt>(-(<i>insertion point</i>) - 1)</tt>.  The <i>insertion
+	 *             otherwise, <samp>(-(<i>insertion point</i>) - 1)</samp>.  The <i>insertion
 	 *             point</i> is defined as the the point at which the value would
 	 *             be inserted into the array: the index of the first
 	 *             element greater than the key, or the length of the array, if all
@@ -784,7 +838,7 @@ public class ARRAYS {
 	 * @param key the value to be searched for.
 	 * @param c a comparator.
 	 * @return index of the search key, if it is contained in the array;
-	 *             otherwise, <tt>(-(<i>insertion point</i>) - 1)</tt>.  The <i>insertion
+	 *             otherwise, <samp>(-(<i>insertion point</i>) - 1)</samp>.  The <i>insertion
 	 *             point</i> is defined as the the point at which the value would
 	 *             be inserted into the array: the index of the first
 	 *             element greater than the key, or the length of the array, if all
@@ -816,7 +870,7 @@ public class ARRAYS {
 	 * @param key the value to be searched for.
 	 * @param c a comparator.
 	 * @return index of the search key, if it is contained in the array;
-	 *             otherwise, <tt>(-(<i>insertion point</i>) - 1)</tt>.  The <i>insertion
+	 *             otherwise, <samp>(-(<i>insertion point</i>) - 1)</samp>.  The <i>insertion
 	 *             point</i> is defined as the the point at which the value would
 	 *             be inserted into the array: the index of the first
 	 *             element greater than the key, or the length of the array, if all
@@ -828,7 +882,641 @@ public class ARRAYS {
 	public static KEY_GENERIC int binarySearch( final KEY_GENERIC_TYPE[] a, final KEY_GENERIC_TYPE key, final KEY_COMPARATOR KEY_GENERIC c ) {
 		return binarySearch( a, 0, a.length, key, c );
 	}
+
+
+#if #keys(primitive)
+	/** The size of a digit used during radix sort (must be a power of 2). */
+	private static final int DIGIT_BITS = 8;
+	/** The mask to extract a digit of {@link #DIGIT_BITS} bits. */
+	private static final int DIGIT_MASK = ( 1 << DIGIT_BITS ) - 1;
+	/** The number of digits per element. */
+	private static final int DIGITS_PER_ELEMENT = KEY_CLASS.SIZE / DIGIT_BITS;
+
+	/** This method fixes negative numbers so that the combination exponent/significand is lexicographically sorted. */
+#if #keyclass(Double)
+	private static final long fixDouble( final double d ) {
+		final long l = Double.doubleToRawLongBits( d );
+		return l >= 0 ? l : l ^ 0x7FFFFFFFFFFFFFFFL;
+	}	   
+#elif #keyclass(Float)
+	private static final long fixFloat( final float f ) {
+		final long i = Float.floatToRawIntBits( f );
+		return i >= 0 ? i : i ^ 0x7FFFFFFF;
+	}
 #endif
+
+
+	/** Sorts the specified array using radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This implementation is significantly faster than quicksort 
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. 
+	 * It will allocate a support array of bytes with the same number of elements as the array to be sorted.
+	 * 
+	 * @param a the array to be sorted.
+	 */
+	public static void radixSort( final KEY_TYPE[] a ) {
+		radixSort( a, 0, a.length );
+	}
+
+	/** Sorts the specified array using radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This implementation is significantly faster than quicksort 
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. 
+	 * It will allocate a support array of bytes with the same number of elements as the array to be sorted.
+	 * 
+	 * @param a the array to be sorted.
+	 * @param from the index of the first element (inclusive) to be sorted.
+	 * @param to the index of the last element (exclusive) to be sorted.
+	 */
+	public static void radixSort( final KEY_TYPE[] a, final int from, final int to ) {
+		final int maxLevel = DIGITS_PER_ELEMENT - 1;
+
+		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( DIGITS_PER_ELEMENT - 1 ) + 1;
+		final int[] offsetStack = new int[ stackSize ];
+		int offsetPos = 0;
+		final int[] lengthStack = new int[ stackSize ];
+		int lengthPos = 0;
+		final int[] levelStack = new int[ stackSize ];
+		int levelPos = 0;
+		
+		offsetStack[ offsetPos++ ] = from;
+		lengthStack[ lengthPos++ ] = to - from;
+		levelStack[ levelPos++ ] = 0;
+
+		final int[] count = new int[ 1 << DIGIT_BITS ];
+		final int[] pos = new int[ 1 << DIGIT_BITS ];
+		final byte[] digit = new byte[ a.length ];
+
+		while( offsetPos > 0 ) {
+			final int first = offsetStack[ --offsetPos ];
+			final int length = lengthStack[ --lengthPos ];
+			final int level = levelStack[ --levelPos ];
+#if #keyclass(Character)
+			final int signMask = 0;
+#else
+			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+#endif
+			
+			if ( length < MEDIUM ) {
+				selectionSort( a, first, first + length );
+				continue;
+			}
+			
+			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+
+			// Count keys.
+
+			for( int i = length; i-- != 0; ) digit[ first + i ] = (byte)( ( ( KEY2LEXINT( a[ first + i ] ) >>> shift ) & DIGIT_MASK ) ^ signMask );
+			for( int i = length; i-- != 0; ) count[ digit[ first + i ] & 0xFF ]++;
+			// Compute cumulative distribution and push non-singleton keys on stack.
+			int lastUsed = -1;
+			
+			for( int i = 0, p = first; i < 1 << DIGIT_BITS; i++ ) {
+				if ( count[ i ] != 0 ) {
+					lastUsed = i;
+					if ( level < maxLevel && count[ i ] > 1 ){
+						//System.err.println( " Pushing " + new StackEntry( first + pos[ i - 1 ], first + pos[ i ], level + 1 ) );
+						offsetStack[ offsetPos++ ] = p;
+						lengthStack[ lengthPos++ ] = count[ i ];
+						levelStack[ levelPos++ ] = level + 1;
+					}
+				}
+				pos[ i ] = ( p += count[ i ] );
+			}
+			
+			// When all slots are OK, the last slot is necessarily OK.
+			final int end = first + length - count[ lastUsed ];
+			count[ lastUsed ] = 0;
+
+			// i moves through the start of each block
+			for( int i = first, c = -1, d; i < end; i += count[ c ], count[ c ] = 0 ) {
+				KEY_TYPE t = a[ i ];
+				c = digit[ i ] & 0xFF;
+				while( ( d = --pos[ c ] ) > i ) {
+					final KEY_TYPE z = t;
+					final int zz = c;
+					t = a[ d ];
+					c = digit[ d ] & 0xFF;
+					a[ d ] = z;
+					digit[ d ] = (byte)zz;
+				}
+
+				a[ i ] = t;
+			}
+		}
+	}
+
+
+
+	private static KEY_GENERIC void insertionSortIndirect( final int[] perm, final KEY_TYPE[] a, final int from, final int to ) {
+		for ( int i = from; ++i < to; ) { 
+			int t = perm[ i ];
+			int j = i;
+			for ( int u = perm[ j - 1 ]; a[ t ] < a[ u ]; u = perm[ --j - 1 ] ) {
+				perm[ j ] = u;
+				if ( from == j - 1 ) {
+					--j;
+					break;
+				}
+			}
+			perm[ j ] = t;
+		}
+	}
+
+	/** Sorts the specified array using indirect radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This method implement an <em>indirect</em> sort. The elements of <code>perm</code> (which must
+	 * be exactly the numbers in the interval <code>[0..perm.length)</code>) will be permuted so that
+	 * <code>a[ perm[ i ] ] <= a[ perm[ i + 1 ] ]</code>.
+	 *
+	 * <p>This implementation is significantly faster than quicksort (unstable) or mergesort (stable)
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. 
+	 * It will allocate a support array of bytes with the same number of elements as the array to be sorted,
+	 * and, in the stable case, a further support array as large as <code>perm</code> (note that the stable
+	 * version is slightly faster).
+	 * 
+	 * @param perm a permutation array indexing <code>a</code>.
+	 * @param a the array to be sorted.
+	 * @param stable whether the sorting algorithm should be stable.
+	 */
+	public static void radixSortIndirect( final int[] perm, final KEY_TYPE[] a, final boolean stable ) {
+		radixSortIndirect( perm, a, 0, perm.length, stable );
+	}
+
+	/** Sorts the specified array using indirect radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This method implement an <em>indirect</em> sort. The elements of <code>perm</code> (which must
+	 * be exactly the numbers in the interval <code>[0..perm.length)</code>) will be permuted so that
+	 * <code>a[ perm[ i ] ] <= a[ perm[ i + 1 ] ]</code>.
+	 *
+	 * <p>This implementation is significantly faster than quicksort (unstable) or mergesort (stable)
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. 
+	 * It will allocate a support array of bytes with the same number of elements as the array to be sorted,
+	 * and, in the stable case, a further support array as large as <code>perm</code> (note that the stable
+	 * version is slightly faster).
+	 * 
+	 * @param perm a permutation array indexing <code>a</code>.
+	 * @param a the array to be sorted.
+	 * @param from the index of the first element of <code>perm</code> (inclusive) to be permuted.
+	 * @param to the index of the last element of <code>perm</code> (exclusive) to be permuted.
+	 * @param stable whether the sorting algorithm should be stable.
+	 */
+	public static void radixSortIndirect( final int[] perm, final KEY_TYPE[] a, final int from, final int to, final boolean stable ) {
+		final int maxLevel = DIGITS_PER_ELEMENT - 1;
+
+		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( DIGITS_PER_ELEMENT - 1 ) + 1;
+		final int[] offsetStack = new int[ stackSize ];
+		int offsetPos = 0;
+		final int[] lengthStack = new int[ stackSize ];
+		int lengthPos = 0;
+		final int[] levelStack = new int[ stackSize ];
+		int levelPos = 0;
+		
+		offsetStack[ offsetPos++ ] = from;
+		lengthStack[ lengthPos++ ] = to - from;
+		levelStack[ levelPos++ ] = 0;
+
+		final int[] count = new int[ 1 << DIGIT_BITS ];
+		final int[] pos = stable ? null : new int[ 1 << DIGIT_BITS ];
+		final int[] support = stable ? new int[ perm.length ] : null;
+		final byte[] digit = new byte[ perm.length ];
+
+		while( offsetPos > 0 ) {
+			final int first = offsetStack[ --offsetPos ];
+			final int length = lengthStack[ --lengthPos ];
+			final int level = levelStack[ --levelPos ];
+#if #keyclass(Character)
+			final int signMask = 0;
+#else
+			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+#endif
+			
+			if ( length < MEDIUM ) {
+				insertionSortIndirect( perm, a, first, first + length );
+				continue;
+			}
+			
+			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+
+			// Count keys.
+			for( int i = length; i-- != 0; ) digit[ i ] = (byte)( ( ( KEY2LEXINT( a[ perm[ first + i ] ] ) >>> shift ) & DIGIT_MASK ) ^ signMask );
+			for( int i = length; i-- != 0; ) count[ digit[ i ] & 0xFF ]++;
+			// Compute cumulative distribution and push non-singleton keys on stack.
+			int lastUsed = -1;
+			
+			for( int i = 0, p = 0; i < 1 << DIGIT_BITS; i++ ) {
+				if ( count[ i ] != 0 ) {
+					lastUsed = i;
+					if ( level < maxLevel && count[ i ] > 1 ){
+						offsetStack[ offsetPos++ ] = p + first;
+						lengthStack[ lengthPos++ ] = count[ i ];
+						levelStack[ levelPos++ ] = level + 1;
+					}
+				}
+				if ( stable ) count[ i ] = p += count[ i ];
+				else pos[ i ] = ( p += count[ i ] );
+			}
+			
+			if ( stable ) {
+				for( int i = length; i-- != 0; ) support[ --count[ digit[ i ] & 0xFF ] ] = perm[ first + i ];
+				System.arraycopy( support, 0, perm, first, length );
+				it.unimi.dsi.fastutil.ints.IntArrays.fill( count, 0 );
+			}
+			else {
+				// When all slots are OK, the last slot is necessarily OK.
+				final int end = length - count[ lastUsed ];
+				count[ lastUsed ] = 0;
+				// i moves through the start of each block
+				for( int i = 0, c = -1, d; i < end; i += count[ c ], count[ c ] = 0 ) {
+					int t = perm[ i + first ];
+					c = digit[ i ] & 0xFF;
+					while( ( d = --pos[ c ] ) > i ) {
+						final int z = t;
+						final int zz = c;
+						t = perm[ d + first ];
+						c = digit[ d ] & 0xFF;
+						perm[ d + first ] = z;
+						digit[ d ] = (byte)zz;
+					}
+
+					perm[ i + first ] = t;
+				}
+			}
+		}
+	}
+
+
+
+	private static void selectionSort( final KEY_TYPE[] a, final KEY_TYPE[] b, final int from, final int to ) {
+		for( int i = from; i < to - 1; i++ ) {
+			int m = i;
+			for( int j = i + 1; j < to; j++ ) 
+				if ( a[ j ] < a[ m ] || a[ j ] == a[ m ] && b[ j ] < b[ m ] ) m = j;
+			
+			if ( m != i ) {
+				KEY_TYPE t = a[ i ];
+				a[ i ] = a[ m ];
+				a[ m ] = t;
+				t = b[ i ];
+				b[ i ] = b[ m ];
+				b[ m ] = t;
+			}
+		}
+	}
+
+	/** Sorts the specified pair of arrays lexicographically using radix sort.	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This method implements a <em>lexicographical</em> sorting of the arguments. Pairs of elements
+	 * in the same position in the two provided arrays will be considered a single key, and permuted
+	 * accordingly. In the end, either <code>a[ i ] < a[ i + 1 ]</code> or <code>a[ i ] == a[ i + 1 ]</code> and <code>b[ i ] <= b[ i + 1 ]</code>.
+	 *
+	 * <p>This implementation is significantly faster than quicksort 
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. It will allocate a support array of bytes with the same number of elements as the arrays to be sorted.
+	 * 
+	 * @param a the first array to be sorted.
+	 * @param b the second array to be sorted.
+	 */
+
+	public static void radixSort( final KEY_TYPE[] a, final KEY_TYPE[] b ) {
+		radixSort( a, b, 0, a.length );
+	}
+	
+	/** Sorts the specified pair of arrays lexicographically using radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This method implements a <em>lexicographical</em> sorting of the arguments. Pairs of elements
+	 * in the same position in the two provided arrays will be considered a single key, and permuted
+	 * accordingly. In the end, either <code>a[ i ] < a[ i + 1 ]</code> or <code>a[ i ] == a[ i + 1 ]</code> and <code>b[ i ] <= b[ i + 1 ]</code>.
+	 *
+	 * <p>This implementation is significantly faster than quicksort 
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. It will allocate a support array of bytes with the same number of elements as the arrays to be sorted.
+	 * 
+	 * @param a the first array to be sorted.
+	 * @param b the second array to be sorted.
+	 * @param from the index of the first element (inclusive) to be sorted.
+	 * @param to the index of the last element (exclusive) to be sorted.
+	 */
+	public static void radixSort( final KEY_TYPE[] a, final KEY_TYPE[] b, final int from, final int to ) {
+		final int layers = 2;
+		if ( a.length != b.length ) throw new IllegalArgumentException( "Array size mismatch." );
+		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
+		
+		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
+		final int[] offsetStack = new int[ stackSize ];
+		int offsetPos = 0;
+		final int[] lengthStack = new int[ stackSize ];
+		int lengthPos = 0;
+		final int[] levelStack = new int[ stackSize ];
+		int levelPos = 0;
+		
+		offsetStack[ offsetPos++ ] = from;
+		lengthStack[ lengthPos++ ] = to - from;
+		levelStack[ levelPos++ ] = 0;
+
+		final int[] count = new int[ 1 << DIGIT_BITS ];
+		final int[] pos = new int[ 1 << DIGIT_BITS ];
+		final byte[] digit = new byte[ a.length ];
+
+		while( offsetPos > 0 ) {
+			final int first = offsetStack[ --offsetPos ];
+			final int length = lengthStack[ --lengthPos ];
+			final int level = levelStack[ --levelPos ];
+#if #keyclass(Character)
+			final int signMask = 0;
+#else
+			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+#endif
+			
+			if ( length < MEDIUM ) {
+				selectionSort( a, b, first, first + length );
+				continue;
+			}
+			
+			final KEY_TYPE[] k = level < DIGITS_PER_ELEMENT ? a : b; // This is the key array
+			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+
+			// Count keys.
+			for( int i = length; i-- != 0; ) digit[ first + i ] = (byte)( ( ( KEY2LEXINT( k[ first + i ] ) >>> shift ) & DIGIT_MASK ) ^ signMask );
+			for( int i = length; i-- != 0; ) count[ digit[ first + i ] & 0xFF ]++;
+			// Compute cumulative distribution and push non-singleton keys on stack.
+			int lastUsed = -1;
+
+			for( int i = 0, p = first; i < 1 << DIGIT_BITS; i++ ) {
+				if ( count[ i ] != 0 ) {
+					lastUsed = i;
+					if ( level < maxLevel && count[ i ] > 1 ){
+						offsetStack[ offsetPos++ ] = p;
+						lengthStack[ lengthPos++ ] = count[ i ];
+						levelStack[ levelPos++ ] = level + 1;
+					}
+				}
+				pos[ i ] = ( p += count[ i ] );
+			}
+
+			// When all slots are OK, the last slot is necessarily OK.
+			final int end = first + length - count[ lastUsed ];
+			count[ lastUsed ] = 0;
+			
+			// i moves through the start of each block
+			for( int i = first, c = -1, d; i < end; i += count[ c ], count[ c ] = 0 ) {
+				KEY_TYPE t = a[ i ];
+				KEY_TYPE u = b[ i ];
+				c = digit[ i ] & 0xFF;
+				while( ( d = --pos[ c ] ) > i ) {
+					KEY_TYPE z = t;
+					final int zz = c;
+					t = a[ d ];
+					a[ d ] = z;
+					z = u;
+					u = b[ d ];
+					b[ d ] = z;
+					c = digit[ d ] & 0xFF;
+					digit[ d ] = (byte)zz;
+				}
+
+				a[ i ] = t;
+				b[ i ] = u;
+			}
+		}
+	}
+
+
+	private static void selectionSort( final KEY_TYPE[][] a, final int from, final int to, final int level ) {
+		final int layers = a.length;
+		final int firstLayer = level / DIGITS_PER_ELEMENT;
+
+		for( int i = from; i < to - 1; i++ ) {
+			int m = i;
+			for( int j = i + 1; j < to; j++ ) {
+				for( int p = firstLayer; p < layers; p++ ) {
+					if ( a[ p ][ j ] < a[ p ][ m ] ) {
+						m = j;
+						break;
+					}
+					else if ( a[ p ][ j ] > a[ p ][ m ] ) break;
+				}
+			}
+			if ( m != i ) {
+				for( int p = layers; p-- != 0; ) {
+					final KEY_TYPE u = a[ p ][ i ];
+					a[ p ][ i ] = a[ p ][ m ];
+					a[ p ][ m ] = u;
+				}
+			}
+		}
+	}
+	
+	/** Sorts the specified array of arrays lexicographically using radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This method implements a <em>lexicographical</em> sorting of the provided arrays. Tuples of elements
+	 * in the same position will be considered a single key, and permuted
+	 * accordingly.
+	 *
+	 * <p>This implementation is significantly faster than quicksort 
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. It will allocate a support array of bytes with the same number of elements as the arrays to be sorted.
+	 * 
+	 * @param a an array containing arrays of equal length to be sorted lexicographically in parallel.
+	 */
+	public static void radixSort( final KEY_TYPE[][] a ) {
+		radixSort( a, 0, a[ 0 ].length );
+	}
+
+	/** Sorts the specified array of arrays lexicographically using radix sort.
+	 * 
+	 * <p>The sorting algorithm is a tuned radix sort adapted from Peter M. McIlroy, Keith Bostic and M. Douglas
+	 * McIlroy, &ldquo;Engineering radix sort&rdquo;, <i>Computing Systems</i>, 6(1), pages 5&minus;27 (1993),
+	 * and further improved using the digit-oracle idea described by
+	 * Juha K&auml;rkk&auml;inen and Tommi Rantala in &ldquo;Engineering radix sort for strings&rdquo;,
+	 * <i>String Processing and Information Retrieval, 15th International Symposium</i>, volume 5280 of
+	 * Lecture Notes in Computer Science, pages 3&minus;14, Springer (2008).
+	 *
+	 * <p>This method implements a <em>lexicographical</em> sorting of the provided arrays. Tuples of elements
+	 * in the same position will be considered a single key, and permuted
+	 * accordingly.
+	 *
+	 * <p>This implementation is significantly faster than quicksort 
+	 * already at small sizes (say, more than 10000 elements), but it can only
+	 * sort in ascending order. It will allocate a support array of bytes with the same number of elements as the arrays to be sorted.
+	 * 
+	 * @param a an array containing arrays of equal length to be sorted lexicographically in parallel.
+	 * @param from the index of the first element (inclusive) to be sorted.
+	 * @param to the index of the last element (exclusive) to be sorted.
+	 */
+	public static void radixSort( final KEY_TYPE[][] a, final int from, final int to ) {
+		final int layers = a.length;
+		final int maxLevel = DIGITS_PER_ELEMENT * layers - 1;
+		for( int p = layers, l = a[ 0 ].length; p-- != 0; ) if ( a[ p ].length != l ) throw new IllegalArgumentException( "The array of index " + p + " has not the same length of the array of index 0." );
+
+		final int stackSize = ( ( 1 << DIGIT_BITS ) - 1 ) * ( layers * DIGITS_PER_ELEMENT - 1 ) + 1;
+		final int[] offsetStack = new int[ stackSize ];
+		int offsetPos = 0;
+		final int[] lengthStack = new int[ stackSize ];
+		int lengthPos = 0;
+		final int[] levelStack = new int[ stackSize ];
+		int levelPos = 0;
+		
+		offsetStack[ offsetPos++ ] = from;
+		lengthStack[ lengthPos++ ] = to - from;
+		levelStack[ levelPos++ ] = 0;
+
+		final int[] count = new int[ 1 << DIGIT_BITS ];
+		final int[] pos = new int[ 1 << DIGIT_BITS ];
+		final byte[] digit = new byte[ a[ 0 ].length ];
+		final KEY_TYPE[] t = new KEY_TYPE[ layers ];
+
+		while( offsetPos > 0 ) {
+			final int first = offsetStack[ --offsetPos ];
+			final int length = lengthStack[ --lengthPos ];
+			final int level = levelStack[ --levelPos ];
+#if #keyclass(Character)
+			final int signMask = 0;
+#else
+			final int signMask = level % DIGITS_PER_ELEMENT == 0 ? 1 << DIGIT_BITS - 1 : 0;
+#endif
+			
+			if ( length < MEDIUM ) {
+				selectionSort( a, first, first + length, level );
+				continue;
+			}
+			
+			final KEY_TYPE[] k = a[ level / DIGITS_PER_ELEMENT ]; // This is the key array
+			final int shift = ( DIGITS_PER_ELEMENT - 1 - level % DIGITS_PER_ELEMENT ) * DIGIT_BITS; // This is the shift that extract the right byte from a key
+
+			// Count keys.
+			for( int i = length; i-- != 0; ) digit[ first + i ] = (byte)( ( KEY2LEXINT( k[ first + i ] ) >>> shift & DIGIT_MASK ) ^ signMask );
+			for( int i = length; i-- != 0; ) count[ digit[ first + i ] & 0xFF ]++;
+			// Compute cumulative distribution and push non-singleton keys on stack.
+			int lastUsed = -1;
+			
+			for( int i = 0, p = first; i < 1 << DIGIT_BITS; i++ ) {
+				if ( count[ i ] != 0 ) {
+					lastUsed = i;
+					if ( level < maxLevel && count[ i ] > 1 ){
+						offsetStack[ offsetPos++ ] = p;
+						lengthStack[ lengthPos++ ] = count[ i ];
+						levelStack[ levelPos++ ] = level + 1;
+					}
+				}
+				pos[ i ] = ( p += count[ i ] );
+			}
+
+			// When all slots are OK, the last slot is necessarily OK.
+			final int end = first + length - count[ lastUsed ];
+			count[ lastUsed ] = 0;
+
+			// i moves through the start of each block
+			for( int i = first, c = -1, d; i < end; i += count[ c ], count[ c ] = 0 ) {
+				for( int p = layers; p-- != 0; ) t[ p ] = a[ p ][ i ];
+				c = digit[ i ] & 0xFF;
+				
+				 while( ( d = --pos[ c ] ) > i ) {
+					for( int p = layers; p-- != 0; ) {
+						final KEY_TYPE u = t[ p ];
+						t[ p ] = a[ p ][ d ];
+						a[ p ][ d ] = u;
+					}
+					final int zz = c;
+					c = digit[ d ] & 0xFF;
+					digit[ d ] = (byte)zz;
+				}
+
+				for( int p = layers; p-- != 0; ) a[ p ][ i ] = t[ p ];
+			}
+		}
+	}
+
+
+#endif
+
+#endif
+
+	/** Shuffles the specified array fragment using the specified pseudorandom number generator.
+	 * 
+	 * @param a the array to be shuffled.
+	 * @param from the index of the first element (inclusive) to be shuffled.
+	 * @param to the index of the last element (exclusive) to be shuffled.
+	 * @param random a pseudorandom number generator (please use a <a href="http://dsiutils.dsi.unimi.it/docs/it/unimi/dsi/util/XorShiftStarRandom.html">XorShift*</a> generator).
+	 * @return <code>a</code>.
+	 */
+	public static KEY_GENERIC KEY_GENERIC_TYPE[] shuffle( final KEY_GENERIC_TYPE[] a, final int from, final int to, final Random random ) {
+		for( int i = to - from; i-- != 0; ) {
+			final int p = random.nextInt( i + 1 ); 
+			final KEY_GENERIC_TYPE t = a[ from + i ];
+			a[ from + i ] = a[ from + p ];
+			a[ from + p ] = t;
+		}
+		return a;
+	}
+
+	/** Shuffles the specified array using the specified pseudorandom number generator.
+	 * 
+	 * @param a the array to be shuffled.
+	 * @param random a pseudorandom number generator (please use a <a href="http://dsiutils.dsi.unimi.it/docs/it/unimi/dsi/util/XorShiftStarRandom.html">XorShift*</a> generator).
+	 * @return <code>a</code>.
+	 */
+	public static KEY_GENERIC KEY_GENERIC_TYPE[] shuffle( final KEY_GENERIC_TYPE[] a, final Random random ) {
+		for( int i = a.length; i-- != 0; ) {
+			final int p = random.nextInt( i + 1 ); 
+			final KEY_GENERIC_TYPE t = a[ i ];
+			a[ i ] = a[ p ];
+			a[ p ] = t;
+		}
+		return a;
+	}
 
 	/** A type-specific content-based hash strategy for arrays. */
 
