@@ -43,8 +43,7 @@
       <id>vigna</id>
       <name>Sebastiano Vigna</name>
       <url>http://vigna.dsi.unimi.it/</url>
-      <organization>Computer Science Department, University of
-      Milano</organization>
+      <organization>Computer Science Department, University of Milano</organization>
       <organizationUrl>http://www.dsi.unimi.it/</organizationUrl>
       <roles>
         <role>architect</role>
@@ -64,6 +63,17 @@
       </roles>
       <timezone>-6</timezone>
     </developer>
+    <developer>
+      <id>dweiss</id>
+      <name>Dawid Weiss</name>
+      <email>dawid.weiss@carrotsearch.com</email>
+      <organization>Carrot Search s.c.</organization>
+      <organizationUrl>http://www.carrotsearch.com</organizationUrl>
+      <roles>
+        <role>packager</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
 
   <build>
@@ -74,13 +84,14 @@
         <includes>
           <include>drv/*.drv</include>
           <include>build.properties</include>
+          <include>build.xml</include>
+          <include>CHANGES</include>
+          <include>LICENSE-2.0</include>
           <include>gencsource.sh</include>
           <include>makefile</include>
           <include>README</include>
           <include>README.srcjar</include>
           <include>COPYING.LIB</include>
-          <include>CHANGES</include>
-          <include>build.xml</include>
         </includes>
       </resource>
     </resources>
@@ -93,6 +104,8 @@
           <optimize>true</optimize>
 	  <source>1.5</source>
 	  <target>1.5</target>
+	  <fork>true</fork>
+	  <maxmem>512m</maxmem>
 	</configuration>
       </plugin>
       <plugin>
@@ -146,7 +159,7 @@
       <plugin>
 	<groupId>org.codehaus.mojo</groupId>
 	<artifactId>exec-maven-plugin</artifactId>
-    <version>1.2</version>
+	<version>1.2</version>
 	<executions>
 	  <execution>
 	    <phase>generate-sources</phase>
