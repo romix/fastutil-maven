@@ -270,7 +270,7 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 
 		// There's always an unused entry.
 		while( used[ base ][ displ ] ) {
-			if ( KEY_EQUALS( k, key[ base ][ displ ] ) ) return false;
+			if ( KEY_EQUALS( key[ base ][ displ ], k ) ) return false;
 			base = ( base + ( ( displ = ( displ + 1 ) & segmentMask ) == 0 ? 1 : 0 ) ) & baseMask;
 		}
 
@@ -286,8 +286,9 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 	 * and empties the resulting free entry.
 	 *
 	 * @param pos a starting position.
+	 * @return the position cleared by the shifting process.
 	 */
-	protected final void shiftKeys( long pos ) {
+	protected final long shiftKeys( long pos ) {
 		// Shift entries with the same hash.
 		long last, slot;
 
@@ -313,10 +314,7 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 #if #keys(reference)
 		BIG_ARRAYS.set( key, last, null );
 #endif
-		/*
-		for( int i = 0; i < 10; i++ ) System.err.print( key[ ( t + i ) & mask ] + "(" + (avalanche( (long)KEY2INT( key[ ( t + i ) & mask ] ) ) & mask) + "; " + used[ ( t + i ) & mask ] + ") ");
-		System.err.println();
-		*/
+		return last;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -329,7 +327,7 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 
 		// There's always an unused entry.
 		while( used[ base ][ displ ] ) {
-			if ( KEY_EQUALS( k, key[ base ][ displ ] ) ) {
+			if ( KEY_EQUALS( key[ base ][ displ ], k ) ) {
 				size--;
 				shiftKeys( base * (long)BigArrays.SEGMENT_SIZE + displ );
 				if ( ASSERTS ) checkTable();
@@ -351,13 +349,33 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 
 		// There's always an unused entry.
 		while( used[ base ][ displ ] ) {
-			if ( KEY_EQUALS( k, key[ base ][ displ ] ) ) return true; 
+			if ( KEY_EQUALS( key[ base ][ displ ], k ) ) return true; 
 			base = ( base + ( ( displ = ( displ + 1 ) & segmentMask ) == 0 ? 1 : 0 ) ) & baseMask;
 		}
 
 		return false;
 	}
 
+#if #keyclass(Object)
+	/** Returns the element of this set that is equal to the given key, or <code>null</code>.
+	 * @return the element of this set that is equal to the given key, or <code>null</code>.
+	 */
+	public K get( final KEY_TYPE k ) {
+		final long h = KEY2LONGHASH( k );
+
+		// The starting point.
+		int displ = (int)( h & segmentMask );
+		int base = (int)( ( h & mask ) >>> BigArrays.SEGMENT_SHIFT );
+
+		// There's always an unused entry.
+		while( used[ base ][ displ ] ) {
+			if ( KEY_EQUALS( key[ base ][ displ ], k ) ) return key[ base ][ displ ]; 
+			base = ( base + ( ( displ = ( displ + 1 ) & segmentMask ) == 0 ? 1 : 0 ) ) & baseMask;
+		}
+
+		return null;
+	}
+#endif
 
 	/* Removes all elements from this set.
 	 *
@@ -420,7 +438,11 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 		public void remove() {
 			if ( lastBase == -1 ) throw new IllegalStateException();
 			size--;
-			shiftKeys( lastBase * (long)BigArrays.SEGMENT_SIZE + lastDispl );
+			final long shiftPos = lastBase * (long)BigArrays.SEGMENT_SIZE + lastDispl;
+			if ( shiftKeys( shiftPos ) == shiftPos && c > 0 ) {
+				c++;
+				NEXT_KEY();
+			}
 			lastBase = -1; // You can no longer remove this entry.
 
 			if ( ASSERTS ) checkTable();
@@ -455,11 +477,10 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 	 * to optimize access speed and size.
 	 *
 	 * <P>If the table size is already the minimum possible, this method
-	 * does nothing. If you want to guarantee rehashing, use {@link #rehash()}.
+	 * does nothing.
 	 *
 	 * @return true if there was enough memory to trim the set.
 	 * @see #trim(long)
-	 * @see #rehash()
 	 */
 
 	public boolean trim() {
@@ -489,7 +510,6 @@ public class OPEN_HASH_BIG_SET KEY_GENERIC extends ABSTRACT_SET KEY_GENERIC impl
 	 * @param n the threshold for the trimming.
 	 * @return true if there was enough memory to trim the set.
 	 * @see #trim()
-	 * @see #rehash()
 	 */
 
 	public boolean trim( final long n ) {

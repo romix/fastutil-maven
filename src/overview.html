@@ -178,7 +178,7 @@
 	  <code>Object</code> is not used (see, e.g., {@link it.unimi.dsi.fastutil.PriorityQueue}).
 	  
     <p>Since there are eight primitive types in Java, and we support
-    reference-based containers, we get 1797 (!) classes (some nonsensical
+    reference-based containers, we get 1794 (!) classes (some nonsensical
     classes, such as <code>Boolean2BooleanAVLTreeMap</code>, are not
     generated). Many classes are generated just to mimic the hierarchy of
     {@link java.util} so to redistribute common code in a similar way. There
@@ -289,7 +289,8 @@
 
     <p><strong>Linked classes do not implement wholly the {@link
 	java.util.SortedMap} interface</strong>. They provide methods to get the
-      first and last element in iteration order, but any submap or subset
+      first and last element in iteration order, and to start a bidirectional iterator from any element,
+      but any submap or subset
       method will cause an {@link java.lang.UnsupportedOperationException}
       (this may change in future versions).
 
@@ -336,6 +337,14 @@
 	incrementing it and then putting it back into the map (typically, when
 	counting the number of occurrences of elements in a sequence).
 
+	<li>Hash-set implementations have an additional {@link it.unimi.dsi.fastutil.objects.ObjectOpenHashSet#get(Object) get()}
+	method that returns the actual object in the collection that is equal to the query key.
+
+      <LI>Linked hash-based maps and sets have a wealth of additional methods that make it easy
+      to use them as caches. See, for instance, {@link it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap#putAndMoveToLast(int,int)},
+      {@link it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet#addAndMoveToLast(int)}
+      or {@link it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap#removeFirstInt()}.
+      
       <LI>Submaps of a sorted map and subsets of a sorted sets are of the
 	<code>fastutil</code> type you would expect, too. 
 
@@ -424,6 +433,13 @@
 	has a polymorphic version accepting a type-specific array, but there are
 	also explicitly typed methods
 	{@link it.unimi.dsi.fastutil.bytes.ByteCollection#toByteArray() to<var>keytype</var>Array()}.</li>
+
+	<li>The standard entry-set iterators for hash-based maps use an entry object
+	that refers to the data contained in the hash table. If you retrieve an
+	entry and deleted it, the entry object will become invalid and will throw
+	an {@link java.util.ArrayIndexOutOfBounds} exception. This does not
+	apply to fast iterators (see above).
+
 
       <li>A name clash between the list and collection interfaces
 	forces the deletion method of an collection to be named {@link
@@ -573,9 +589,8 @@
 
     <h3>Queues</h3>
 
-    <P><code>fastutil</code> offers three types of queues: <em>direct
-    queues</em>, <em>indirect queues</em> and <em>double indirect
-    queues</em>. A direct queue offers type-specific method to {@linkplain
+    <P><code>fastutil</code> offers two types of queues: <em>direct
+    queues</em> and <em>indirect queues</em>. A direct queue offers type-specific method to {@linkplain
     it.unimi.dsi.fastutil.longs.LongPriorityQueue#enqueue(long) enqueue} and
     {@linkplain it.unimi.dsi.fastutil.longs.LongPriorityQueue#dequeueLong()
     dequeue} elements. An indirect queue needs a <em>reference array</em>,
@@ -597,7 +612,8 @@
     it.unimi.dsi.fastutil.objects.ObjectHeapSemiIndirectPriorityQueue
     semi-indirect}: in the latter case, there is no need for an explicit
     indirection array (which saves one integer per queue entry), but not all
-    operations will be avalable.
+    operations will be available. Note there there are also
+    {@linkplain it.unimi.dsi.fastutil.ints.IntArrayFIFOQueue FIFO queues}.
 
 
     <h3>Custom Hashing</h3>
@@ -717,8 +733,6 @@
     <li>deletions are effective&mdash;there is no &ldquo;marking&rdquo; of
     deleted entries (the claim that this was impossible with open 
     addressing was, of course, wrong);
-    <li>deletions in linked table are significantly slower, as they require
-    even more work on pointers;
     <li>given a size and a load factor, the backing array of a table will
     be in general larger (in the worst case about two times larger);
     <li>it is no longer possible to set the <em>growth factor</em> of the table, which
@@ -727,11 +741,6 @@
       are kept just for backward compatibility);
     <li>there are efficient implementations of {@linkplain it.unimi.dsi.fastutil.ints.IntOpenHashBigSet big sets}.
     </ul>
-    
-    <P>In the case of linked tables we have even slower deletions than before because
-    deleting an entry requires not only updating its pointers, but also 
-    to move around another few entries and updating their pointers (updating
-    pointers needs potentially linear time).
     
     <h3>Memory Usage</h3>
 
@@ -766,12 +775,8 @@
       doubling its size. 
 
     <p>In the case of linked hash tables, there is an additional vector of
-      2<sup>&lceil;log <var>n</var>&nbsp;/&nbsp;<var>f</var>&rceil;</sup> integers that is used to store link information. Each
-      element records the next and previous element indexes exclusive-or'd
-      together. As a result, linked tables provide bidirectional iterators
-      without having to store two pointers per entry (however, iterators
-      starting from a given element require a linear probe to be
-      initialized, unless the element is the last one).
+      2<sup>&lceil;log <var>n</var>&nbsp;/&nbsp;<var>f</var>&rceil;</sup> longs that is used to store link information. Each
+      element records the next and previous element (packed together so to be more cache friendly). 
       
     <h4>Balanced Trees</h4>
 

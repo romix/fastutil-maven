@@ -1,3 +1,41 @@
+6.3 -> 6.4
+
+- WARNING: Indirect queues must obviously have a way to determine whether
+  an index is in the queue. It was an oversight in the interface design
+  that a contains() method was not present. We wook the risk of adding it
+  now. At the same time, we modified remove() so that now returns a
+  boolean specifying whether the index to be removed was actually in the
+  queue, as this is more in line with the Java Collections Framework.
+
+- Removed unused double-priority queue related classes.
+
+- Now array-based sets and maps have a constructor based on
+  java.util.Collection and java.util.Map (as for the other
+  kind of sets and maps).
+
+- New doubly linked implementation for linked hash maps and sets. It uses
+  twice the space for pointers, but mixes well with linear probing, so we
+  have again constant-time true deletions. Moreover, iterators can be
+  started from any key in constant time (albeit the first access to the
+  index of the list iterator will require a linear scan, unless the
+  iterator started from the first or the last key). Additional methods
+  such as getAndMoveToFirst() make the creation of LRU caches very easy.
+  Thanks to Brien Colwell for donating the code.
+
+- Now object-based array FIFO queues provide deque methods. Moreover,
+  they clean up the backing array after returning an object or when
+  performing a clear().
+
+- New get() method in set implementations makes it possible to recover
+  the actual object int the collection that is equal to the query key.
+
+- A number of bugs were found and fixed by Christian Falz (thanks!). In
+  all binary search code the "to" parameter was *inclusive*, but the
+  documentation said *exclusive*, with obvious problems. Hash map
+  iterators could return under some very subtle and almost irreproducible
+  circumstances a previously deleted slot. Deleted hash map entries would
+  return spurious null values.
+
 6.2.2 -> 6.3
 
 - We now have radix sort. It's much faster than quicksort, but it can
@@ -39,6 +77,8 @@
 5.1.5 -> 6.0.0
 
 - WARNING: the jar file is now fastutil.jar (not fastutil5.jar), again.
+
+- WARNING: now fastutil requires Java 6+.
 
 - fastutil is now released under the Apache License 2.0.
 
