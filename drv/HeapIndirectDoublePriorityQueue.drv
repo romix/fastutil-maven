@@ -255,9 +255,9 @@ public class HEAP_INDIRECT_DOUBLE_PRIORITY_QUEUE KEY_GENERIC extends HEAP_INDIRE
 		secondaryQueue.clear();
 	}
 
-	public void remove( final int index ) {
+	public boolean remove( final int index ) {
 		secondaryQueue.remove( index );
-		super.remove( index );
+		return super.remove( index );
 	}
 
 	public int secondaryFront( final int[] a ) {

@@ -70,7 +70,24 @@ for((v=0; v<${#TYPE_CAP[*]}; v++)); do
     if [[ ${TYPE_CAP[$v]} == $VALUE_TYPE_CAP ]]; then break; fi;
 done
 
-if [[ $root == *Linked* ]]; then Linked=Linked; fi
+if [[ $root == *Linked* ]]; then 
+Linked=Linked
+echo -e \
+"#define SET_PREV( f64, p32 )       SET_UPPER( f64, p32 )\n"\
+"#define SET_NEXT( f64, n32 )       SET_LOWER( f64, n32 )\n"\
+"#define COPY_PREV( f64, p64 )      SET_UPPER64( f64, p64 )\n"\
+"#define COPY_NEXT( f64, n64 )      SET_LOWER64( f64, n64 )\n"\
+"#define GET_PREV( f64 )            GET_UPPER( f64 )\n"\
+"#define GET_NEXT( f64 )            GET_LOWER( f64 )\n"\
+"#define SET_UPPER_LOWER( f64, up32, low32 )    f64 = ( ( up32 & 0xFFFFFFFFL ) << 32 ) | ( low32 & 0xFFFFFFFFL )\n"\
+"#define SET_UPPER( f64, up32 )     f64 ^= ( ( f64 ^ ( ( up32 & 0xFFFFFFFFL ) << 32 ) ) & 0xFFFFFFFF00000000L )\n"\
+"#define SET_LOWER( f64, low32 )    f64 ^= ( ( f64 ^ ( low32 & 0xFFFFFFFFL ) ) & 0xFFFFFFFFL )\n"\
+"#define SET_UPPER64( f64, up64 )   f64 ^= ( ( f64 ^ ( up64 & 0xFFFFFFFF00000000L ) ) & 0xFFFFFFFF00000000L )\n"\
+"#define SET_LOWER64( f64, low64 )  f64 ^= ( ( f64 ^ ( low64 & 0xFFFFFFFFL ) ) & 0xFFFFFFFFL )\n"\
+"#define GET_UPPER( f64 )           (int) ( f64 >>> 32 )\n"\
+"#define GET_LOWER( f64 )           (int) f64\n"
+fi
+
 if [[ $root == *Custom* ]]; then Custom=Custom; fi
 
 echo -e \
@@ -358,6 +375,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define READ_KEY read${TYPE_CAP2[$k]}\n"\
 "#define WRITE_KEY write${TYPE_CAP2[$k]}\n"\
 "#define DEQUEUE dequeue${TYPE_STD[$k]}\n"\
+"#define DEQUEUE_LAST dequeueLast${TYPE_STD[$k]}\n"\
 "#define SUBLIST_METHOD ${TYPE_LC[$k]}SubList\n"\
 "#define SINGLETON_METHOD ${TYPE_LC[$k]}Singleton\n\n"\
 "#define FIRST first${TYPE_STD[$k]}\n"\
@@ -371,6 +389,8 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define AS_KEY_ITERATOR as${TYPE_CAP2[$k]}Iterator\n\n"\
 "#define TO_KEY_ARRAY to${TYPE_STD[$k]}Array\n"\
 "#define ENTRY_GET_KEY get${TYPE_STD[$k]}Key\n"\
+"#define REMOVE_FIRST_KEY removeFirst${TYPE_STD[$k]}\n"\
+"#define REMOVE_LAST_KEY removeLast${TYPE_STD[$k]}\n"\
 "#define PARSE_KEY parse${TYPE_STD[$k]}\n"\
 "#define LOAD_KEYS load${TYPE_STD[$k]}s\n"\
 "#define LOAD_KEYS_BIG load${TYPE_STD[$k]}sBig\n"\
@@ -386,6 +406,8 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 "#define WRITE_VALUE write${TYPE_CAP2[$v]}\n"\
 "#define VALUE_ITERATOR_METHOD ${TYPE_LC2[$v]}Iterator\n\n"\
 "#define ENTRY_GET_VALUE get${TYPE_STD[$v]}Value\n"\
+"#define REMOVE_FIRST_VALUE removeFirst${TYPE_STD[$v]}\n"\
+"#define REMOVE_LAST_VALUE removeLast${TYPE_STD[$v]}\n"\
 \
 \
 "/* Methods (keys/values) */\n"\
@@ -412,7 +434,7 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 \
 \
 "#ifdef Custom\n"\
-"#define KEY_EQUALS(x,y) ( strategy.equals( (x), (y) ) )\n"\
+"#define KEY_EQUALS(x,y) ( strategy.equals( (x), " KEY_GENERIC_CAST "(y) ) )\n"\
 "#else\n"\
 "#if #keyclass(Object)\n"\
 "#define KEY_EQUALS(x,y) ( (x) == null ? (y) == null : (x).equals(y) )\n"\
@@ -444,9 +466,9 @@ $(if [[ "${CLASS[$v]}" != "" ]]; then\
 \
 "#if #keyclass(Object)\n"\
 "#ifdef Custom\n"\
-"#define KEY2JAVAHASH(x) ( strategy.hashCode(x) )\n"\
-"#define KEY2INTHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( strategy.hashCode(x) ) )\n"\
-"#define KEY2LONGHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)strategy.hashCode(x) ) )\n"\
+"#define KEY2JAVAHASH(x) ( strategy.hashCode(" KEY_GENERIC_CAST "(x)) )\n"\
+"#define KEY2INTHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( strategy.hashCode(" KEY_GENERIC_CAST "(x)) ) )\n"\
+"#define KEY2LONGHASH(x) ( it.unimi.dsi.fastutil.HashCommon.murmurHash3( (long)strategy.hashCode(" KEY_GENERIC_CAST "(x)) ) )\n"\
 "#else\n"\
 "#define KEY2JAVAHASH(x) ( (x) == null ? 0 : (x).hashCode() )\n"\
 "#define KEY2INTHASH(x) ( (x) == null ? 0x87fcd5c : it.unimi.dsi.fastutil.HashCommon.murmurHash3( (x).hashCode() ) )\n"\

@@ -32,7 +32,6 @@ package PACKAGE;
 
 import it.unimi.dsi.fastutil.Arrays;
 import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.ints.IntArrays;
 import java.util.Random;
 
 #if #keys(primitive)
@@ -427,6 +426,7 @@ public class ARRAYS {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static KEY_GENERIC void selectionSort( final KEY_GENERIC_TYPE[] a, final int from, final int to ) {
 		for( int i = from; i < to - 1; i++ ) {
 			int m = i;
@@ -439,6 +439,7 @@ public class ARRAYS {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static KEY_GENERIC void insertionSort( final KEY_GENERIC_TYPE[] a, final int from, final int to ) {
 		for ( int i = from; ++i < to; ) { 
 			KEY_GENERIC_TYPE t = a[ i ];
@@ -787,6 +788,7 @@ public class ARRAYS {
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public static KEY_GENERIC int binarySearch( final KEY_GENERIC_TYPE[] a, int from, int to, final KEY_GENERIC_TYPE key ) {
 		KEY_GENERIC_TYPE midVal;
+		to--;
 		while (from <= to) {
 			final int mid = (from + to) >>> 1;
 			midVal = a[ mid ];
@@ -849,6 +851,7 @@ public class ARRAYS {
 	 */
 	public static KEY_GENERIC int binarySearch( final KEY_GENERIC_TYPE[] a, int from, int to, final KEY_GENERIC_TYPE key, final KEY_COMPARATOR KEY_GENERIC c ) {
 		KEY_GENERIC_TYPE midVal;
+		to--;
 		while (from <= to) {
 			final int mid = (from + to) >>> 1;
 			midVal = a[ mid ];
