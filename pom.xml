@@ -196,6 +196,7 @@
             <exclude>COPYING.LIB</exclude>
             <exclude>CHANGES</exclude>
             <exclude>build.xml</exclude>
+            <exclude>it/unimi/dsi/fastutil/*IndirectDoublePriorityQueue*</exclude>
           </excludes>
         </configuration>
       </plugin>
