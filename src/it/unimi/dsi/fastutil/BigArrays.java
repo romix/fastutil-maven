@@ -53,39 +53,49 @@ import it.unimi.dsi.fastutil.longs.LongComparator;
  * 
  * <p>You can scan a big array using the following idiomatic form:
  * <pre>
- *   for( int i = 0; i &lt; a.length; i++ ) {
- *      final int[] t = a[ i ];
+ *   for( int s = 0; s &lt; a.length; s++ ) {
+ *      final int[] t = a[ s ];
  *      final int l = t.length;
  *      for( int d = 0; d &lt; l; d++ ) { do something with t[ d ] }
  *   }
  * </pre>
  * or using the (simpler and usually faster) reversed version:
  * <pre>
- *   for( int i = a.length; i-- != 0; ) {
- *      final int[] t = a[ i ];  
- *      for( int d = s.length; d-- != 0; ) { do something with t[ d ] }
+ *   for( int s = a.length; s-- != 0; ) {
+ *      final int[] t = a[ s ];  
+ *      for( int d = t.length; d-- != 0; ) { do something with t[ d ] }
  *   }
  * </pre>
  * <p>Inside the inner loop, the original index in <code>a</code> can be retrieved using {@link #index(int, int) index(segment, displacement)}.
- * Note that caching is essential in making these loops essentially as fast as those scanning standard arrays (as iterations
+ * Do <em>not</em> use an additional variable to keep track of the value of the original index, as
+ * computing it on the fly is significantly faster. For instance, to inizialise the <var>i</var>-th element of a big array of
+ * long integers to the value <var>i</var> you should use
+ * <pre>
+ *   for( int s = a.length; s-- != 0; ) {
+ *      final long[] t = a[ s ];  
+ *      for( int d = t.length; d-- != 0; ) t[ d ] = index( s, d );
+ *   }
+ * </pre>
+ *  
+ * <p>Note that caching is essential in making these loops essentially as fast as those scanning standard arrays (as iterations
  * of the outer loop happen very rarely). Using loops of this kind is extremely faster than using a standard
  * loop and accessors.
  * 
  * <p>In some situations, you might want to iterate over a part of a big array having an offset and a length. In this case, the
  * idiomatic loops are as follows:
  * <pre>
- *   for( int i = segment( offset ); i &lt; segment( offset + length + SEGMENT_MASK ); i++ ) {
- *      final int[] t = a[ i ];
- *      final int l = Math.min( t.length, offset + length - start( i ) );
- *      for( int d = Math.max( 0, offset - start( i ) ); d &lt; l; d++ ) { do something with t[ d ] }
+ *   for( int s = segment( offset ); s &lt; segment( offset + length + SEGMENT_MASK ); s++ ) {
+ *      final int[] t = a[ s ];
+ *      final int l = (int)Math.min( t.length, offset + length - start( s ) );
+ *      for( int d = (int)Math.max( 0, offset - start( s ) ); d &lt; l; d++ ) { do something with t[ d ] }
  *   }
  * </pre>
  * or, in a reversed form,
  * <pre>
- *   for( int i = segment( offset + length + SEGMENT_MASK ); i-- != segment( offset ); ) {
- *      final int[] t = a[ i ];
- *      final int s = Math.max( 0, offset - start( i ) );
- *      for( int d = Math.min( t.length, offset + length - start( i ) ); d-- != s ; ) { do something with t[ d ] }
+ *   for( int s = segment( offset + length + SEGMENT_MASK ); s-- != segment( offset ); ) {
+ *      final int[] t = a[ s ];
+ *      final int b = (int)Math.max( 0, offset - start( s ) );
+ *      for( int d = (int)Math.min( t.length, offset + length - start( s ) ); d-- != b ; ) { do something with t[ d ] }
  *   }
  * </pre>
  * 
@@ -436,5 +446,44 @@ public class BigArrays {
 	 */
 	private static void vecSwap( final BigSwapper swapper, long from, long l, final long s ) {
 		for ( int i = 0; i < s; i++, from++, l++ ) swapper.swap( from, l );
+	}
+	
+	public static void main( final String arg[] ) {
+		int[][] a = IntBigArrays.newBigArray( 1L << Integer.parseInt( arg[ 0 ] ) );
+		long x, y, z, start;
+
+		for( int k = 10; k-- != 0; ) {
+
+			start = -System.currentTimeMillis();
+
+			x = 0;
+			for( long i = IntBigArrays.length( a ); i-- != 0; ) x ^= i ^ IntBigArrays.get( a, i );
+			if ( x == 0 ) System.err.println();
+
+			System.out.println( "Single loop: " + ( start + System.currentTimeMillis() ) + "ms" );
+
+			start = -System.currentTimeMillis();
+
+			y = 0;
+			for( int i = a.length; i-- != 0; ) {
+				final int[] t = a[ i ];
+				for( int d = t.length; d-- != 0; ) y ^= t[ d ] ^ index( i, d ); 
+			}
+			if ( y == 0 ) System.err.println();
+			if ( x != y ) throw new AssertionError();
+
+			System.out.println( "Double loop: " + ( start + System.currentTimeMillis() ) + "ms" );
+
+			z = 0;
+			long j = IntBigArrays.length( a );
+			for( int i = a.length; i-- != 0; ) {
+				final int[] t = a[ i ];
+				for( int d = t.length; d-- != 0; ) y ^= t[ d ] ^ --j; 
+			}
+			if ( z == 0 ) System.err.println();
+			if ( x != z ) throw new AssertionError();
+
+			System.out.println( "Double loop (with additional index): " + ( start + System.currentTimeMillis() ) + "ms" );
+		}
 	}
 }
